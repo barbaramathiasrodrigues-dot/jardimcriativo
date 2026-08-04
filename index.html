@@ -64,7 +64,7 @@
       <h1 class="text-xl sm:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md">
         🧪 Laboratório de Criação & Conexões
       </h1>
-      <p class="text-xs text-amber-200/70 italic">"Reclame criando algo melhor. Transforme bastidores em estoque."</p>
+      <p class="text-xs text-amber-200/70 italic">"Captura ➔ Criação & Bordo ➔ Curadoria & Esteira"</p>
 
       <!-- BARRA DE NAVEGAÇÃO DE 7 ABAS -->
       <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-4 sm:grid-cols-7 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
@@ -78,7 +78,7 @@
           🔀 Conexões
         </button>
         <button @click="abaAtiva = 'bordo'" :class="abaAtiva === 'bordo' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          ⛵ Bordo
+          ⛵ Bordo / Criação
         </button>
         <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
           🚀 Curadoria
@@ -357,7 +357,7 @@
       <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
           <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo Vivo</h2>
+            <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo & Criação</h2>
             <p class="text-[10px] text-amber-200/60 italic" x-text="'Navegação da data: ' + diaDetalheChave"></p>
           </div>
           <button @click="saveState()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold rounded-xl text-xs shadow">
@@ -407,7 +407,7 @@
           </template>
         </div>
 
-        <!-- STATUS DO PROCESSO & SUGESTÃO DE POST -->
+        <!-- STATUS DO PROCESSO & ENVIAR DIRETO PARA CURADORIA -->
         <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
           <span class="font-bold text-amber-300 block">🔨 Status do Foco / Projeto Atual:</span>
           
@@ -416,7 +416,7 @@
           <div>
             <label class="block font-bold text-amber-300 mb-1">Etapa Atual do Processo:</label>
             <div class="grid grid-cols-3 gap-2 text-center">
-              <button @click="bordoVivo.etapa = 'Inicio'" :class="bordoVivo.etapa === 'Inicio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌱 Início (Inspirações)</button>
+              <button @click="bordoVivo.etapa = 'Início'" :class="bordoVivo.etapa === 'Início' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌱 Início (Inspirações)</button>
               <button @click="bordoVivo.etapa = 'Meio'" :class="bordoVivo.etapa === 'Meio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🔨 Meio (Bastidores)</button>
               <button @click="bordoVivo.etapa = 'Fim'" :class="bordoVivo.etapa === 'Fim' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌸 Fim (Resultado)</button>
             </div>
@@ -424,7 +424,7 @@
 
           <div class="p-3 bg-amber-950/50 rounded-xl border border-amber-700/50 text-amber-200 text-[11px] space-y-1">
             <span class="font-bold text-amber-300 block">💡 Sugestão de Conteúdo para esta Etapa:</span>
-            <template x-if="bordoVivo.etapa === 'Inicio'">
+            <template x-if="bordoVivo.etapa === 'Início'">
               <p>Poste sobre as referências do seu "gabinete de curiosidades", o livro que inspirou ou a pergunta inicial.</p>
             </template>
             <template x-if="bordoVivo.etapa === 'Meio'">
@@ -434,11 +434,16 @@
               <p>Mostre o produto concluído, o que foi descartado durante o processo e a principal lição aprendida.</p>
             </template>
           </div>
+
+          <!-- BOTÃO MÁGICO DE PONTE: BORDO -> CURADORIA -->
+          <button @click="enviarBordoParaCuradoria()" type="button" class="w-full py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-stone-950 font-black rounded-xl uppercase text-[11px] shadow-lg hover:brightness-110 flex items-center justify-center gap-1.5 transition">
+            <span>🚀</span> Enviar este Projeto para Curadoria & Avaliação (Esteira) ➔
+          </button>
         </div>
       </section>
     </template>
 
-    <!-- ABA 5: ESTEIRA & FILTROS DE CURADORIA PRÉ-PUBLICAÇÃO (NOVA SEQUÊNCIA LÓGICA) -->
+    <!-- ABA 5: ESTEIRA & FILTROS DE CURADORIA PRÉ-PUBLICAÇÃO -->
     <template x-if="abaAtiva === 'esteira'">
       <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
@@ -860,6 +865,18 @@
           this.novaCaptura.conteudo = obs;
           this.novaCaptura.fonte = 'Notas Rápidas';
           this.abaAtiva = 'captura';
+        },
+
+        enviarBordoParaCuradoria() {
+          const tituloProjeto = this.bordoVivo.projeto || (this.mosaico[this.diaDetalheChave] ? this.mosaico[this.diaDetalheChave].acontecimentos : '');
+          if (!tituloProjeto) return alert('Preencha o nome do Projeto ou os Acontecimentos do dia antes de enviar para a Curadoria.');
+
+          this.esteiraPublicar.titulo = tituloProjeto;
+          this.esteiraPublicar.faseProcesso = this.bordoVivo.etapa || 'Meio';
+          this.esteiraPublicar.ondeSalvo = `Diário de Bordo (${this.diaDetalheChave})`;
+
+          this.saveState();
+          this.abaAtiva = 'esteira';
         },
 
         uploadImagemCaptura(event) {
