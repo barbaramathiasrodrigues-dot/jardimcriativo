@@ -15,7 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- Fontes Épicas da Terra Média -->
+  <!-- Fontes Épicas -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=MedievalSharp&display=swap" rel="stylesheet">
@@ -81,7 +81,7 @@
           ⛵ Bordo
         </button>
         <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          🚀 Esteira
+          🚀 Curadoria
         </button>
         <button @click="abaAtiva = 'regulacao'" :class="abaAtiva === 'regulacao' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
           🌡️ Regulação
@@ -438,48 +438,123 @@
       </section>
     </template>
 
-    <!-- ABA 5: ESTEIRA FINAL & PUBLICADOR (COM LISTA DE ITENS SALVOS) -->
+    <!-- ABA 5: ESTEIRA & FILTROS DE CURADORIA PRÉ-PUBLICAÇÃO (NOVA SEQUÊNCIA LÓGICA) -->
     <template x-if="abaAtiva === 'esteira'">
       <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
-          <h2 class="text-sm font-bold text-amber-300 lotr-title">🚀 Esteira Final & Publicador</h2>
-          <p class="text-[10px] text-amber-200/60 italic">Mapeie onde o arquivo está salvo e qual rede social receberá</p>
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🚀 Esteira de Curadoria & Decisão de Post</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Defina 'O que é' → Submeta ao teste do 'Se' → Aprove ou Mantenha no Fluxo para Ajustes</p>
         </div>
 
-        <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
-          <input type="text" x-model="esteiraPublicar.titulo" placeholder="Título do Conteúdo Pronto / Rascunho" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
-
+        <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-4 text-xs">
+          <!-- TÍTULO E ARMAZENAMENTO -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label class="block text-[10px] text-amber-300 mb-1">Onde está salvo?</label>
-              <input type="text" x-model="esteiraPublicar.ondeSalvo" placeholder="Ex: Canva Pasta X, PC, Google Drive" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+              <label class="block text-[10px] font-bold text-amber-300 mb-1">Título do Conteúdo / Rascunho:</label>
+              <input type="text" x-model="esteiraPublicar.titulo" placeholder="Ex: Post sobre GTD e TDAH" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
             </div>
             <div>
-              <label class="block text-[10px] text-amber-300 mb-1">Estado do Material:</label>
+              <label class="block text-[10px] font-bold text-amber-300 mb-1">Onde está salvo o arquivo original?</label>
+              <input type="text" x-model="esteiraPublicar.ondeSalvo" placeholder="Ex: Canva Pasta X, Obsidian, Drive" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+            </div>
+          </div>
+
+          <!-- 1º PASSO: O FILTRO DO "O QUÊ" (O QUE É ESSE CONTEÚDO?) -->
+          <div class="p-3 bg-stone-900/90 rounded-xl border border-amber-800/50 space-y-3">
+            <span class="font-bold text-amber-300 block text-[11px] uppercase tracking-wide">1. O Filtro do "O quê" (O que postar?)</span>
+            <p class="text-[10px] text-amber-200/60 italic">"Mostre seu trabalho e processo, não apenas o produto final."</p>
+            
+            <div class="space-y-1">
+              <label class="block text-[10px] text-amber-300">Fase do Projeto:</label>
+              <div class="grid grid-cols-3 gap-1 text-center text-[10px]">
+                <button type="button" @click="esteiraPublicar.faseProcesso = 'Início'" :class="esteiraPublicar.faseProcesso === 'Início' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-950 text-amber-200'" class="p-2 rounded-lg border border-stone-800">🌱 Início (Inspirações)</button>
+                <button type="button" @click="esteiraPublicar.faseProcesso = 'Meio'" :class="esteiraPublicar.faseProcesso === 'Meio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-950 text-amber-200'" class="p-2 rounded-lg border border-stone-800">🔨 Meio (Bastidores/Erros)</button>
+                <button type="button" @click="esteiraPublicar.faseProcesso = 'Fim'" :class="esteiraPublicar.faseProcesso === 'Fim' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-950 text-amber-200'" class="p-2 rounded-lg border border-stone-800">🌸 Fim (Resultado/Lições)</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
+              <div class="p-2.5 bg-stone-950 rounded-lg border border-stone-800 space-y-1">
+                <span class="font-bold text-amber-300 block">Gabinete de Curiosidades</span>
+                <label class="flex items-center gap-2 cursor-pointer mt-1">
+                  <input type="checkbox" x-model="esteiraPublicar.gabineteCuriosidades" class="rounded bg-stone-900 border-amber-600 text-amber-600">
+                  <span class="text-amber-200">🖼️ Influência / "Ouro na Lixeira"?</span>
+                </label>
+              </div>
+
+              <div class="p-2.5 bg-stone-950 rounded-lg border border-stone-800 space-y-1">
+                <span class="font-bold text-amber-300 block">Arquitetura de Conteúdo</span>
+                <div class="flex gap-1 mt-1">
+                  <button type="button" @click="esteiraPublicar.categoriaArquitetura = 'Fluxo'" :class="esteiraPublicar.categoriaArquitetura === 'Fluxo' ? 'bg-sky-600 text-stone-950 font-bold' : 'bg-stone-900 text-sky-300'" class="flex-1 p-1 rounded border border-sky-800 text-[9px]">🌊 Fluxo (Caderno)</button>
+                  <button type="button" @click="esteiraPublicar.categoriaArquitetura = 'Estoque'" :class="esteiraPublicar.categoriaArquitetura === 'Estoque' ? 'bg-emerald-600 text-stone-950 font-bold' : 'bg-stone-900 text-emerald-300'" class="flex-1 p-1 rounded border border-emerald-800 text-[9px]">📚 Estoque (Durável)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2º PASSO: O FILTRO DO "SE" (TESTE "E DAÍ?" / DEVO POSTAR MESMO?) -->
+          <div class="p-3 bg-amber-950/30 rounded-xl border border-amber-800/50 space-y-2">
+            <span class="font-bold text-amber-300 block text-[11px] uppercase tracking-wide">2. O Filtro do "Se" (Devo postar agora? / Teste "E daí?")</span>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
+              <label class="flex items-center gap-2 cursor-pointer bg-stone-900 p-2 rounded-lg border border-stone-800">
+                <input type="checkbox" x-model="esteiraPublicar.filtroUtil" class="rounded bg-stone-950 border-amber-600 text-amber-600">
+                <span class="text-amber-200">💡 É útil? (Soluciona/ensina)</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer bg-stone-900 p-2 rounded-lg border border-stone-800">
+                <input type="checkbox" x-model="esteiraPublicar.filtroInteressante" class="rounded bg-stone-950 border-amber-600 text-amber-600">
+                <span class="text-amber-200">✨ É interessante / inspirador?</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer bg-stone-900 p-2 rounded-lg border border-stone-800">
+                <input type="checkbox" x-model="esteiraPublicar.filtroConfortavel" class="rounded bg-stone-950 border-amber-600 text-amber-600">
+                <span class="text-amber-200">🛡️ Confortável se chefe/mãe vir?</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer bg-stone-900 p-2 rounded-lg border border-stone-800">
+                <input type="checkbox" x-model="esteiraPublicar.filtroCreditos" class="rounded bg-stone-950 border-amber-600 text-amber-600">
+                <span class="text-amber-200">🏷️ Regra de Ouro: Créditos dados?</span>
+              </label>
+            </div>
+            
+            <label class="flex items-center gap-2 cursor-pointer bg-stone-900 p-2 rounded-lg border border-stone-800 text-[10px]">
+              <input type="checkbox" x-model="esteiraPublicar.filtroPrivacidade" class="rounded bg-stone-950 border-amber-600 text-amber-600">
+              <span class="text-amber-200">🧘 Mantém a privacidade pessoal (não é diário íntimo)</span>
+            </label>
+          </div>
+
+          <!-- ESTADO E REDE SOCIAL -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-amber-300 mb-1">Estado do Material:</label>
               <select x-model="esteiraPublicar.estado" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
                 <option value="Rascunho Solto">📝 Rascunho Solto</option>
                 <option value="Layout em Produção">🎨 Layout em Produção</option>
                 <option value="Pronto para Postar">✅ Pronto para Postar</option>
               </select>
             </div>
+            <div>
+              <label class="block text-[10px] font-bold text-amber-300 mb-1">Rede Social / Destino:</label>
+              <select x-model="esteiraPublicar.rede" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 font-bold">
+                <option value="Instagram Studio Feed">📸 Instagram Studio (Feed)</option>
+                <option value="Instagram Studio Stories">📱 Instagram Studio (Stories)</option>
+                <option value="Instagram Studio Reels">🎬 Instagram Studio (Reels)</option>
+                <option value="Instagram Pessoal Feed">👤 Instagram Pessoal (Feed)</option>
+                <option value="Blog">🌐 Blog</option>
+                <option value="Threads">💬 Threads</option>
+                <option value="WhatsApp">🟢 WhatsApp / Grupo</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label class="block text-[10px] text-amber-300 mb-1">Rede Social / Destino:</label>
-            <select x-model="esteiraPublicar.rede" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 font-bold">
-              <option value="Instagram Studio Feed">📸 Instagram Studio (Feed)</option>
-              <option value="Instagram Studio Stories">📱 Instagram Studio (Stories)</option>
-              <option value="Instagram Studio Reels">🎬 Instagram Studio (Reels)</option>
-              <option value="Instagram Pessoal Feed">👤 Instagram Pessoal (Feed)</option>
-              <option value="Blog">🌐 Blog</option>
-              <option value="Threads">💬 Threads</option>
-              <option value="WhatsApp">🟢 WhatsApp / Grupo</option>
-            </select>
-          </div>
+          <!-- BOTÕES DE DECISÃO (APROVAR vs MANTER NO FLUXO) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-amber-900/40">
+            <button @click="devolverAoFluxo()" type="button" class="py-2.5 bg-stone-900 hover:bg-stone-800 text-sky-300 border border-sky-700/60 font-bold rounded-xl text-[10px] uppercase flex items-center justify-center gap-1">
+              <span>🔄</span> Decidi NÃO postar agora: Manter no Fluxo (Para Ajustes/Recaptura)
+            </button>
 
-          <button @click="salvarNaEsteiraFinal()" class="w-full py-2 bg-gradient-to-r from-amber-600 to-yellow-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
-            🚀 Registrar Conteúdo na Esteira
-          </button>
+            <button @click="salvarNaEsteiraFinal()" type="button" class="py-2.5 bg-gradient-to-r from-emerald-600 to-amber-600 text-stone-950 font-black rounded-xl text-[10px] uppercase shadow-lg hover:brightness-110 flex items-center justify-center gap-1">
+              <span>✅</span> Aprovado no Filtro: Salvar na Esteira Final
+            </button>
+          </div>
         </div>
 
         <!-- LISTA DOS MATERIAIS NA ESTEIRA FINAL -->
@@ -494,9 +569,11 @@
                 <button @click="removerEsteira(idx)" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
               </div>
 
-              <div class="flex flex-wrap gap-2 text-[10px]">
+              <div class="flex flex-wrap gap-1.5 text-[9px]">
                 <span class="bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800" x-text="item.estado"></span>
                 <span class="bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-800 font-bold" x-text="'Destino: ' + item.rede"></span>
+                <span class="bg-sky-950 text-sky-300 px-2 py-0.5 rounded-full border border-sky-800" x-text="'Tipo: ' + (item.categoriaArquitetura || 'Fluxo')"></span>
+                <span class="bg-purple-950 text-purple-300 px-2 py-0.5 rounded-full border border-purple-800" x-text="'Fase: ' + (item.faseProcesso || 'Meio')"></span>
               </div>
             </div>
           </template>
@@ -504,17 +581,17 @@
       </section>
     </template>
 
-    <!-- ABA 6: REGULAÇÃO, TERMÔMETRO & FILTRO "E DAÍ?" -->
+    <!-- ABA 6: REGULAÇÃO, TERMÔMETRO & CAPTURA DE MELHORIA DE PROCESSO -->
     <template x-if="abaAtiva === 'regulacao'">
       <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
-          <h2 class="text-sm font-bold text-amber-300 lotr-title">🌡️ Regulação & Filtro "E Daí?"</h2>
-          <p class="text-[10px] text-amber-200/60 italic">Proteção para o seu cérebro e avaliação de qualidade</p>
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🌡️ Regulação & Captura de Melhoria</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Avalie o estado do cérebro e transforme incômodos em melhoria contínua de processos</p>
         </div>
 
         <!-- TERMÔMETRO DE SOBRECARGA -->
         <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-800/60 space-y-3 text-xs">
-          <span class="font-bold text-amber-300 block">🌡️ Termômetro de Sobrecarga vs. Desconforto Isolado</span>
+          <span class="font-bold text-amber-300 block">🌡️ Diagnóstico: Sobrecarga Real vs. Desconforto Isolado</span>
           <div class="space-y-1.5">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" x-model="regulacao.repetitivo" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
@@ -531,17 +608,24 @@
           </div>
         </div>
 
-        <!-- FILTRO E DAÍ -->
-        <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-800/60 space-y-2 text-xs">
-          <span class="font-bold text-amber-300 block">💡 Teste "E Daí?" (Filtro de Qualidade)</span>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" x-model="regulacao.edai_util" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
-            <span class="text-amber-200">Este conteúdo é realmente útil, interessante ou inspirador?</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" x-model="regulacao.edai_conforto" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
-            <span class="text-amber-200">Sinto-me confortável se minha mãe, amigos ou chefe virem isso?</span>
-          </label>
+        <!-- CAPTURA DE MELHORIA DE PROCESSO -->
+        <div class="p-4 rounded-2xl bg-teal-950/30 border border-teal-700/50 space-y-3 text-xs">
+          <span class="font-bold text-teal-300 block text-sm">🛠️ Captura de Melhoria (Fritura/Desconforto → Processo)</span>
+          <p class="text-[10px] text-amber-200/60 italic">Identificou uma fricção? Registre aqui para transformar em ajuste na sua rotina ou num projeto futuro.</p>
+
+          <div>
+            <label class="block text-[10px] text-amber-300 mb-1">Qual é o desconforto / fricção percebida?</label>
+            <input type="text" x-model="capturaMelhoria.desconforto" placeholder="Ex: Perdi muito tempo procurando o arquivo da arte" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+          </div>
+
+          <div>
+            <label class="block text-[10px] text-teal-300 mb-1">Ação de Melhoria Prática / Ajuste do Sistema:</label>
+            <textarea x-model="capturaMelhoria.acaoMelhoria" rows="2" placeholder="Ex: Criar uma pasta 'Final_Export' padronizada no Drive" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+          </div>
+
+          <button @click="salvarCapturaMelhoria()" class="w-full py-2 bg-teal-600 hover:bg-teal-500 text-stone-950 font-black rounded-xl uppercase text-[10px]">
+            💾 Guardar no Banco como Captura de Melhoria (#melhoria)
+          </button>
         </div>
       </section>
     </template>
@@ -632,14 +716,30 @@
         novaCaptura: { fonte: 'Pesquisas', tags: '', conteudo: '' },
         tempImagemCaptura: null,
 
+        capturaMelhoria: { desconforto: '', acaoMelhoria: '' },
+
         queixa: { reclamacao: '', solucao: '' },
         novoCruzamento: { texto: '' },
         tempImagemCruzamento: null,
 
         bordoVivo: { projeto: '', etapa: 'Meio' },
-        esteiraPublicar: { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' },
 
-        regulacao: { repetitivo: false, sofrimento: false, edai_util: false, edai_conforto: false },
+        esteiraPublicar: { 
+          titulo: '', 
+          ondeSalvo: '', 
+          estado: 'Rascunho Solto', 
+          rede: 'Instagram Studio Feed',
+          filtroUtil: false,
+          filtroInteressante: false,
+          filtroConfortavel: false,
+          filtroCreditos: false,
+          filtroPrivacidade: true,
+          faseProcesso: 'Meio',
+          gabineteCuriosidades: false,
+          categoriaArquitetura: 'Fluxo'
+        },
+
+        regulacao: { repetitivo: false, sofrimento: false },
 
         nomesMeses: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
 
@@ -786,6 +886,21 @@
           this.saveState();
         },
 
+        salvarCapturaMelhoria() {
+          if (!this.capturaMelhoria.desconforto) return alert('Descreva o desconforto percebido.');
+          this.capturas.unshift({
+            id: 'c_' + Date.now(),
+            fonte: 'Regulação / Captura de Melhoria',
+            conteudo: `🚨 Desconforto/Fricção: ${this.capturaMelhoria.desconforto}\n🛠️ Ação de Melhoria: ${this.capturaMelhoria.acaoMelhoria}`,
+            imagem: null,
+            tagsArray: ['#melhoria-de-processo', '#regulacao'],
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+          this.capturaMelhoria = { desconforto: '', acaoMelhoria: '' };
+          this.abaAtiva = 'captura';
+          this.saveState();
+        },
+
         removerCaptura(idx) {
           if (confirm('Deseja excluir esta captura?')) {
             this.capturas.splice(idx, 1);
@@ -863,12 +978,57 @@
           }
         },
 
+        devolverAoFluxo() {
+          if (!this.esteiraPublicar.titulo) return alert('Insira ao menos um título para devolver ao fluxo.');
+          
+          this.capturas.unshift({
+            id: 'c_' + Date.now(),
+            fonte: 'Fluxo em Ajuste / Recaptura',
+            conteudo: `🌊 [EM FLUXO] ${this.esteiraPublicar.titulo}\n📂 Onde está: ${this.esteiraPublicar.ondeSalvo || 'Ainda não salvo'}\n📌 Fase: ${this.esteiraPublicar.faseProcesso}`,
+            imagem: null,
+            tagsArray: ['#fluxo', '#ajustes', '#recaptura'],
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+
+          this.esteiraPublicar = { 
+            titulo: '', 
+            ondeSalvo: '', 
+            estado: 'Rascunho Solto', 
+            rede: 'Instagram Studio Feed',
+            filtroUtil: false,
+            filtroInteressante: false,
+            filtroConfortavel: false,
+            filtroCreditos: false,
+            filtroPrivacidade: true,
+            faseProcesso: 'Meio',
+            gabineteCuriosidades: false,
+            categoriaArquitetura: 'Fluxo'
+          };
+
+          this.saveState();
+          alert('🔄 Ideia mantida no Fluxo! Ela foi enviada para o seu Banco de Capturas para ajustes futuros.');
+          this.abaAtiva = 'captura';
+        },
+
         salvarNaEsteiraFinal() {
           if (!this.esteiraPublicar.titulo) return alert('Insira o título do conteúdo.');
           this.esteiraFinal.unshift({ ...this.esteiraPublicar, id: 'e_' + Date.now() });
-          this.esteiraPublicar = { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' };
+          this.esteiraPublicar = { 
+            titulo: '', 
+            ondeSalvo: '', 
+            estado: 'Rascunho Solto', 
+            rede: 'Instagram Studio Feed',
+            filtroUtil: false,
+            filtroInteressante: false,
+            filtroConfortavel: false,
+            filtroCreditos: false,
+            filtroPrivacidade: true,
+            faseProcesso: 'Meio',
+            gabineteCuriosidades: false,
+            categoriaArquitetura: 'Fluxo'
+          };
           this.saveState();
-          alert('🚀 Registrado na esteira final com sucesso!');
+          alert('🚀 Conteúdo revisado e registrado na esteira final com sucesso!');
         },
 
         removerEsteira(idx) {
