@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Jardim Criativo — O Mosaico de Rivendell</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Firebase Compat (SDK Leve para Notion) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Fontes Épicas da Terra Média -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=MedievalSharp&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #090c0a 0%, #141b16 50%, #060907 100%);
+      color: #e2d1b0;
+      font-family: 'MedievalSharp', cursive, serif;
+      min-height: 100vh;
+    }
+    .lotr-title { font-family: 'Cinzel Decorative', serif; }
+    .lotr-sub { font-family: 'Cinzel', serif; }
+    .glass-card {
+      background: rgba(16, 24, 18, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6" x-data="jardimCriativoApp()" x-init="initApp()">
+
+  <div class="max-w-xl mx-auto space-y-4">
+
+    <!-- CABEÇALHO DO JARDIM CRIATIVO -->
+    <header class="glass-card rounded-3xl p-5 border border-amber-600/40 relative overflow-hidden text-center space-y-2">
+      <div class="flex justify-between items-center text-[10px] lotr-sub font-bold">
+        <span class="text-emerald-400">Ateliê Criativo • Mosaico 2026</span>
+        <span x-show="salvando" class="text-amber-400 animate-pulse">Sync...</span>
+        <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
+      </div>
+
+      <h1 class="text-xl md:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md flex items-center justify-center gap-2">
+        🌱 Jardim Criativo
+      </h1>
+      <p class="text-xs text-amber-200/70 italic">"Você não está se cobrando por obras-primas. Está registrando como seu cérebro viveu a criação."</p>
+
+      <!-- PAINEL DE LEGENDA RÁPIDA -->
+      <div class="pt-2 border-t border-amber-900/40 flex justify-around text-[10px] font-bold">
+        <span class="text-amber-300">Dias Regados: <strong x-text="totalDiasRegados" class="text-emerald-400"></strong></span>
+        <span class="text-amber-300">Ano: <strong>2026</strong></span>
+      </div>
+    </header>
+
+    <!-- LEGENDAS DA CRIATIVIDADE (EDITÁVEIS) -->
+    <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
+      <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas & Tipos de Rega</span>
+        <button @click="modoEdicaoLegenda = !modoEdicaoLegenda" class="text-[10px] text-amber-300 hover:underline">
+          <span x-text="modoEdicaoLegenda ? 'Concluir Edição' : '✏️ Editar Legendas'"></span>
+        </button>
+      </div>
+
+      <!-- LISTA DE CATEGORIAS DE REGA -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+        <template x-for="(cat, idx) in legendas" :key="cat.id">
+          <div 
+            @click="!modoEdicaoLegenda && selecionarLegendaAtiva(cat.id)"
+            :class="[
+              cat.bg,
+              legendaSelecionada === cat.id ? 'ring-2 ring-amber-300 font-bold scale-105' : 'opacity-80'
+            ]"
+            class="p-2.5 rounded-2xl border border-stone-800 cursor-pointer transition-all flex items-center gap-2 text-stone-950 font-bold">
+            <span class="text-base" x-text="cat.icon"></span>
+            
+            <template x-if="!modoEdicaoLegenda">
+              <span class="truncate text-[11px]" x-text="cat.nome"></span>
+            </template>
+            
+            <template x-if="modoEdicaoLegenda">
+              <input type="text" x-model="cat.nome" @input="saveState()" class="w-full bg-stone-900/90 text-amber-100 text-[10px] p-1 rounded border border-amber-600/40 focus:outline-none">
+            </template>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- O MAPA / MOSAICO DO ANO (MATRIZ VISUAL DE REGISTRO) -->
+    <section class="glass-card rounded-3xl p-5 space-y-4 border border-emerald-500/40">
+      <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+        <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico Visual de 2026</span>
+        <span class="text-[10px] text-amber-200/60 italic">Toque em um dia para aplicar a legenda selecionada</span>
+      </div>
+
+      <!-- SELETOR DO MÊS -->
+      <div class="flex items-center justify-between text-xs font-bold lotr-sub bg-stone-950/80 p-2 rounded-2xl border border-amber-900/40">
+        <button @click="mesAtualIndex = (mesAtualIndex > 0 ? mesAtualIndex - 1 : 11)" class="text-amber-400 p-1">◀</button>
+        <span class="text-amber-300 font-extrabold text-sm" x-text="nomesMeses[mesAtualIndex] + ' 2026'"></span>
+        <button @click="mesAtualIndex = (mesAtualIndex < 11 ? mesAtualIndex + 1 : 0)" class="text-amber-400 p-1">▶</button>
+      </div>
+
+      <!-- GRADE DOS DIAS DO MÊS -->
+      <div class="grid grid-cols-7 gap-2 text-center text-xs">
+        <span class="text-[10px] text-stone-500 font-bold">Dom</span>
+        <span class="text-[10px] text-stone-500 font-bold">Seg</span>
+        <span class="text-[10px] text-stone-500 font-bold">Ter</span>
+        <span class="text-[10px] text-stone-500 font-bold">Qua</span>
+        <span class="text-[10px] text-stone-500 font-bold">Qui</span>
+        <span class="text-[10px] text-stone-500 font-bold">Sex</span>
+        <span class="text-[10px] text-stone-500 font-bold">Sáb</span>
+
+        <template x-for="dia in diasDoMes" :key="dia.chave">
+          <div 
+            @click="dia.valido && pintarDia(dia.chave)"
+            :class="[
+              dia.valido ? 'cursor-pointer hover:scale-110 active:scale-95' : 'opacity-10 cursor-default',
+              obterEstiloDia(dia.chave)
+            ]"
+            class="h-10 rounded-xl border flex flex-col items-center justify-center transition-all relative">
+            <span class="text-[11px] font-bold" x-text="dia.numero"></span>
+            <span class="text-[10px]" x-text="obterIconeDia(dia.chave)"></span>
+          </div>
+        </template>
+      </div>
+
+      <!-- CAMPO DE NOTA DE LEGENDA DO DIA SELECIONADO -->
+      <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-amber-300" x-text="'📝 Nota de Legenda • ' + diaDetalheChave"></span>
+          <button @click="diaDetalheChave = null" class="text-amber-400">✕</button>
+        </div>
+        
+        <textarea 
+          x-model="mosaico[diaDetalheChave].nota" 
+          @input="saveState()" 
+          rows="2" 
+          placeholder="Ex: Tive uma ideia incrível para o Studio Bárbara enquanto caminhava..." 
+          class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- LÓGICA DO APP & FIREBASE COMPAT -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoCzavo5Poj1kjKZbJ9rUwkLQyyjpMgmI",
+      authDomain: "benjamin-express-os.firebaseapp.com",
+      projectId: "benjamin-express-os",
+      storageBucket: "benjamin-express-os.firebasestorage.app",
+      messagingSenderId: "318003877871",
+      appId: "1:318003877871:web:54f4390f54c7710c5cc81a",
+      measurementId: "G-41JWT5ZN72"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function jardimCriativoApp() {
+      return {
+        salvando: false,
+        mesAtualIndex: new Date().getMonth(),
+        legendaSelecionada: 'escrevi',
+        modoEdicaoLegenda: false,
+        diaDetalheChave: null,
+        mosaico: {},
+
+        nomesMeses: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+
+        // LEGENDAS EDITÁVEIS INICIAIS
+        legendas: [
+          { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', bg: 'bg-emerald-400 border-emerald-300' },
+          { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', bg: 'bg-sky-400 border-sky-300' },
+          { id: 'ideia', nome: 'Tive uma Ideia', icon: '🟨', bg: 'bg-amber-300 border-yellow-200' },
+          { id: 'desenhei', nome: 'Desenhei / Design', icon: '🟪', bg: 'bg-purple-400 border-purple-300' },
+          { id: 'incubacao', nome: 'Incubei o Projeto', icon: '🟥', bg: 'bg-rose-400 border-rose-300' },
+          { id: 'descanso', nome: 'Descansei de Proposta', icon: '⬜', bg: 'bg-stone-300 border-stone-100' }
+        ],
+
+        get totalDiasRegados() {
+          return Object.keys(this.mosaico).filter(k => this.mosaico[k] && this.mosaico[k].tipo).length;
+        },
+
+        get diasDoMes() {
+          const ano = 2026;
+          const primeiroDiaSemana = new Date(ano, this.mesAtualIndex, 1).getDay();
+          const totalDiasNoMes = new Date(ano, this.mesAtualIndex + 1, 0).getDate();
+
+          let lista = [];
+
+          // Dias vazios do mês anterior para alinhar a grade
+          for (let i = 0; i < primeiroDiaSemana; i++) {
+            lista.push({ numero: '', chave: `vazio_${i}`, valido: false });
+          }
+
+          // Dias reais do mês
+          for (let d = 1; d <= totalDiasNoMes; d++) {
+            const mesStr = String(this.mesAtualIndex + 1).padStart(2, '0');
+            const diaStr = String(d).padStart(2, '0');
+            const chave = `2026-${mesStr}-${diaStr}`;
+            lista.push({ numero: d, chave: chave, valido: true });
+          }
+
+          return lista;
+        },
+
+        async initApp() {
+          const cache = localStorage.getItem('jardim_criativo_backup');
+          if (cache) {
+            try {
+              const parsed = JSON.parse(cache);
+              this.mosaico = parsed.mosaico || {};
+              if (parsed.legendas) this.legendas = parsed.legendas;
+            } catch(e) {}
+          }
+
+          db.collection("modo_casa").doc("jardim_criativo").onSnapshot((docSnap) => {
+            if (docSnap.exists) {
+              const data = docSnap.data();
+              if (data.mosaico) this.mosaico = data.mosaico;
+              if (data.legendas) this.legendas = data.legendas;
+            }
+          });
+        },
+
+        selecionarLegendaAtiva(id) {
+          this.legendaSelecionada = id;
+        },
+
+        pintarDia(chave) {
+          if (!this.mosaico[chave]) {
+            this.mosaico[chave] = { tipo: this.legendaSelecionada, nota: '' };
+          } else if (this.mosaico[chave].tipo === this.legendaSelecionada) {
+            delete this.mosaico[chave]; // Toque duplo desfaz a pintura
+          } else {
+            this.mosaico[chave].tipo = this.legendaSelecionada;
+          }
+
+          this.diaDetalheChave = this.mosaico[chave] ? chave : null;
+          this.saveState();
+        },
+
+        obterEstiloDia(chave) {
+          if (!this.mosaico[chave] || !this.mosaico[chave].tipo) {
+            return 'bg-stone-950/80 border-stone-800/80 text-amber-200/50 hover:border-amber-600/50';
+          }
+
+          const tipo = this.mosaico[chave].tipo;
+          const leg = this.legendas.find(l => l.id === tipo);
+          return leg ? leg.bg + ' shadow-md font-bold' : 'bg-stone-800 text-stone-200';
+        },
+
+        obterIconeDia(chave) {
+          if (!this.mosaico[chave] || !this.mosaico[chave].tipo) return '';
+          const leg = this.legendas.find(l => l.id === this.mosaico[chave].tipo);
+          return leg ? leg.icon : '';
+        },
+
+        salvarLocal() {
+          localStorage.setItem('jardim_criativo_backup', JSON.stringify({
+            mosaico: this.mosaico,
+            legendas: this.legendas
+          }));
+        },
+
+        async saveState() {
+          this.salvando = true;
+          this.salvarLocal();
+          try {
+            await db.collection("modo_casa").doc("jardim_criativo").set({
+              mosaico: this.mosaico,
+              legendas: this.legendas,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            this.salvando = false;
+          } catch(e) {
+            this.salvando = false;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
