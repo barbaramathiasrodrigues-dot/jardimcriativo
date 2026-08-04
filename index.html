@@ -3,19 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌱 Jardim Criativo & Ateliê de Conteúdo — Rivendell OS</title>
+  <title>🌱 Laboratório de Criação — Rivendell OS</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Alpine.js CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- Fontes Épicas da Terra Média -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=MedievalSharp&display=swap" rel="stylesheet">
@@ -39,436 +34,268 @@
       background: rgba(8, 12, 9, 0.85);
       border: 1px solid rgba(212, 175, 55, 0.2);
     }
-    @media print {
-      body { background: #fff !important; color: #000 !important; font-family: sans-serif !important; }
-      .no-print { display: none !important; }
-      .print-only { display: block !important; }
-      .glass-card, .glass-inner { background: none !important; border: 1px solid #aaa !important; box-shadow: none !important; color: #000 !important; }
-    }
   </style>
 </head>
-<body class="p-2 sm:p-5" x-data="jardimCriativoHub()" x-init="initApp()">
+<body class="p-2 sm:p-5" x-data="laboratorioCriacaoApp()" x-init="initApp()">
 
-  <!-- WIDGET WRAPPER -->
-  <div class="max-w-2xl mx-auto space-y-4">
+  <div class="max-w-3xl mx-auto space-y-4">
 
-    <!-- CABEÇALHO DO HUB CRIATIVO -->
-    <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 relative overflow-hidden text-center space-y-2 no-print">
+    <!-- CABEÇALHO -->
+    <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 text-center space-y-2">
       <div class="flex justify-between items-center text-[10px] lotr-sub font-bold">
-        <span class="text-emerald-400">Ateliê Criativo • NeuroOrganizer OS</span>
-        <div class="flex items-center gap-2">
-          <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Sincronizando...</span>
-          <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
-        </div>
+        <span class="text-emerald-400">Ateliê Criativo • Laboratório de Sistemas</span>
+        <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Sync...</span>
+        <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
       </div>
 
-      <h1 class="text-xl sm:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md flex items-center justify-center gap-2">
-        🌱 Jardim Criativo & Ateliê
+      <h1 class="text-xl sm:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md">
+        🧪 Laboratório de Criação & Conexões
       </h1>
-      <p class="text-xs text-amber-200/70 italic">"Você não está se cobrando por obras-primas. Está registrando a navegabilidade do seu cérebro."</p>
+      <p class="text-xs text-amber-200/70 italic">"Reclame criando algo melhor. Transforme bastidores em estoque."</p>
 
-      <!-- BARRA DE ABAS DO SISTEMA (7 NAVEGAÇÕES) -->
-      <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-4 sm:grid-cols-7 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
-        <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+      <!-- BARRA DE ABAS REESTRUTURADA -->
+      <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-5 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
+        <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
           🧩 Mosaico
         </button>
-        <button @click="abaAtiva = 'captura'" :class="abaAtiva === 'captura' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          🎯 Captura
+        <button @click="abaAtiva = 'captura'" :class="abaAtiva === 'captura' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
+          🎯 Captura & Furtos
         </button>
-        <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          🔀 Conexões
+        <button @click="abaAtiva = 'conexoes'" :class="abaAtiva === 'conexoes' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
+          🔀 Conexões & Tags
         </button>
-        <button @click="abaAtiva = 'bordo'" :class="abaAtiva === 'bordo' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          ⛵ Bordo
+        <button @click="abaAtiva = 'bordo'" :class="abaAtiva === 'bordo' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
+          ⛵ Diário de Bordo
         </button>
-        <button @click="abaAtiva = 'furtos'" :class="abaAtiva === 'furtos' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          🏴‍☠️ Furtos
-        </button>
-        <button @click="abaAtiva = 'regulacao'" :class="abaAtiva === 'regulacao' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          🌡️ Regulação
-        </button>
-        <button @click="abaAtiva = 'historico'" :class="abaAtiva === 'historico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
-          📜 Histórico
+        <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
+          🚀 Esteira & Redes
         </button>
       </nav>
     </header>
 
-    <!-- ABA 1: MOSAICO VISUAL + OBSERVAÇÕES RÁPIDAS NO CALENDÁRIO -->
+    <!-- ABA 1: MOSAICO + BOTÃO ENVIAR PARA CAPTURA -->
     <template x-if="abaAtiva === 'mosaico'">
-      <div class="space-y-4 no-print">
-        
-        <!-- LEGENDAS DA CRIATIVIDADE -->
-        <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
-          <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas de Rega (Multi-Seleção)</span>
-            <button @click="modoEdicaoLegenda = !modoEdicaoLegenda" class="text-[10px] text-amber-300 hover:underline">
-              <span x-text="modoEdicaoLegenda ? 'Concluir Edição' : '✏️ Editar Legendas'"></span>
-            </button>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-            <template x-for="(cat, idx) in legendas" :key="cat.id">
-              <div 
-                @click="!modoEdicaoLegenda && alternarLegendaNoDia(cat.id)"
-                :class="[
-                  cat.bg,
-                  diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id) ? 'ring-2 ring-amber-300 font-black scale-105 shadow-lg' : 'opacity-70'
-                ]"
-                class="p-2.5 rounded-2xl border border-stone-800 cursor-pointer transition-all flex items-center justify-between text-stone-950 font-bold">
-                
-                <div class="flex items-center gap-2 truncate">
-                  <span class="text-base" x-text="cat.icon"></span>
-                  <template x-if="!modoEdicaoLegenda">
-                    <span class="truncate text-[11px]" x-text="cat.nome"></span>
-                  </template>
-                  <template x-if="modoEdicaoLegenda">
-                    <input type="text" x-model="cat.nome" @input="saveState()" class="w-full bg-stone-900/90 text-amber-100 text-[10px] p-1 rounded border border-amber-600/40 focus:outline-none">
-                  </template>
-                </div>
-
-                <span x-show="diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id)" class="text-xs font-black">✓</span>
-              </div>
-            </template>
-          </div>
-        </section>
-
-        <!-- MOSAICO DO MÊS DE 2026 -->
+      <div class="space-y-4">
         <section class="glass-card rounded-3xl p-5 space-y-4 border border-emerald-500/40">
           <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-            <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico do Cérebro (2026)</span>
-            <span class="text-[10px] text-amber-200/60 italic" x-text="diaDetalheChave ? 'Selecionado: ' + diaDetalheChave : 'Toque num dia para pintar'"></span>
+            <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico do Cérebro 2026</span>
+            <span class="text-[10px] text-amber-200/60 italic" x-text="diaDetalheChave ? 'Dia: ' + diaDetalheChave : 'Selecione um dia'"></span>
           </div>
 
+          <!-- SELETOR DO MÊS -->
           <div class="flex items-center justify-between text-xs font-bold lotr-sub bg-stone-950/80 p-2 rounded-2xl border border-amber-900/40">
             <button @click="mesAtualIndex = (mesAtualIndex > 0 ? mesAtualIndex - 1 : 11)" class="text-amber-400 p-1">◀</button>
             <span class="text-amber-300 font-extrabold text-sm" x-text="nomesMeses[mesAtualIndex] + ' 2026'"></span>
             <button @click="mesAtualIndex = (mesAtualIndex < 11 ? mesAtualIndex + 1 : 0)" class="text-amber-400 p-1">▶</button>
           </div>
 
+          <!-- GRADE -->
           <div class="grid grid-cols-7 gap-2 text-center text-xs">
-            <span class="text-[10px] text-stone-500 font-bold">Dom</span>
-            <span class="text-[10px] text-stone-500 font-bold">Seg</span>
-            <span class="text-[10px] text-stone-500 font-bold">Ter</span>
-            <span class="text-[10px] text-stone-500 font-bold">Qua</span>
-            <span class="text-[10px] text-stone-500 font-bold">Qui</span>
-            <span class="text-[10px] text-stone-500 font-bold">Sex</span>
-            <span class="text-[10px] text-stone-500 font-bold">Sáb</span>
-
             <template x-for="dia in diasDoMes" :key="dia.chave">
               <div 
                 @click="dia.valido && selecionarDiaParaEditar(dia.chave)"
                 :style="obterEstiloGradienteDia(dia.chave)"
                 :class="[
-                  dia.valido ? 'cursor-pointer hover:scale-110 active:scale-95' : 'opacity-10 cursor-default',
-                  diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105 z-10' : '',
-                  !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800/80 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black shadow-md'
+                  dia.valido ? 'cursor-pointer hover:scale-110' : 'opacity-10 cursor-default',
+                  diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105' : '',
+                  !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black'
                 ]"
-                class="h-11 rounded-xl border flex flex-col items-center justify-center transition-all relative overflow-hidden">
-                
-                <span class="text-[11px] font-bold z-10" :class="temCor(dia.chave) ? 'text-stone-950 drop-shadow-sm font-black' : 'text-amber-200/70'" x-text="dia.numero"></span>
-                
-                <div class="flex items-center justify-center gap-0.5 z-10 max-w-full overflow-hidden">
-                  <template x-for="ico in obterIconesDia(dia.chave)" :key="ico">
-                    <span class="text-[8px]" x-text="ico"></span>
-                  </template>
-                </div>
+                class="h-11 rounded-xl border flex flex-col items-center justify-center relative overflow-hidden">
+                <span class="text-[11px] font-bold z-10" x-text="dia.numero"></span>
               </div>
             </template>
           </div>
 
-          <!-- 📝 CAMPO DE OBSERVAÇÕES RÁPIDAS DIRETO NA PÁGINA DO CALENDÁRIO -->
-          <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-2 text-xs">
+          <!-- CAMPO OBSERVAÇÃO + ENVIAR PARA CAPTURA -->
+          <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
             <div class="flex justify-between items-center">
-              <span class="font-bold text-amber-300" x-text="'📝 Observação Rápida • ' + diaDetalheChave"></span>
-              <button @click="diaDetalheChave = null" class="text-amber-400 font-bold">✕</button>
+              <span class="font-bold text-amber-300" x-text="'📝 Nota do Dia • ' + diaDetalheChave"></span>
+              <button @click="diaDetalheChave = null" class="text-amber-400">✕</button>
             </div>
             
-            <textarea 
-              x-model="mosaico[diaDetalheChave].observacaoCalendario" 
-              @input="saveState()" 
-              rows="2" 
-              placeholder="Adicione observações rápidas, pensamentos ou notas sobre este dia..." 
-              class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+            <textarea x-model="mosaico[diaDetalheChave].observacaoCalendario" @input="saveState()" rows="2" placeholder="Anote a ideia rápida ou ocorrência..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+
+            <button @click="enviarObsParaCaptura()" class="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+              🎯 Transformar Observação em Captura das 25 Fontes
+            </button>
           </div>
         </section>
-
       </div>
     </template>
 
-    <!-- ABA 2: MANDALA DE CAPTURA -->
+    <!-- ABA 2: CAPTURA & FURTOS UNIFICADOS (25 FONTES) -->
     <template x-if="abaAtiva === 'captura'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in no-print">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">🎯 Mandala das 25 Fontes de Captura</h2>
-            <p class="text-[10px] text-amber-200/60 italic">Nenhum pensamento se perde: selecione a origem da semente</p>
-          </div>
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+        <div class="border-b border-amber-900/40 pb-2">
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🎯 Banco de Captura & Furtos (25 Fontes)</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Catalogado com tags de assunto para cruzamentos futuros</p>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
-          <template x-for="(fonte, idx) in fontesMandala" :key="idx">
-            <button 
-              @click="capturarPelaFonte(fonte)"
-              class="p-2.5 rounded-2xl glass-inner hover:border-amber-400/70 transition text-left space-y-1 group border border-stone-800">
-              <div class="flex justify-between items-center">
-                <span class="text-amber-400 font-bold" x-text="(idx + 1) + '. ' + fonte.nome"></span>
-                <span class="text-xs group-hover:scale-125 transition" x-text="fonte.icon"></span>
-              </div>
-              <span class="text-[9px] text-amber-200/50 block italic" x-text="fonte.categoria"></span>
-            </button>
-          </template>
-        </div>
-      </section>
-    </template>
-
-    <!-- ABA 3: ESTEIRA & CRUZAMENTO DE IDEIAS (MOTOR DE COMBINAÇÃO) -->
-    <template x-if="abaAtiva === 'esteira'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in no-print">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">🔀 Cruzamento de Ideias & Esteira</h2>
-            <p class="text-[10px] text-amber-200/60 italic">Combine ideias do seu banco para criar novos conceitos</p>
-          </div>
-          <button @click="modalNovoTema = true" class="px-3 py-1 bg-amber-600 text-stone-950 font-bold rounded-xl text-xs shadow">
-            ➕ Nova Semente
-          </button>
-        </div>
-
-        <!-- 🎲 GERADOR DE COMBINAÇÃO ALEATÓRIA (CRUZAMENTO DE IDEIAS) -->
-        <div class="p-4 rounded-2xl bg-amber-950/40 border border-amber-600/60 space-y-3 text-xs">
-          <div class="flex justify-between items-center">
-            <span class="font-bold text-amber-300 flex items-center gap-1.5">
-              <span>🎲</span> Motor de Combinação Criativa
-            </span>
-            <button @click="gerarCombinacaoAleatoria()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold rounded-xl text-[10px]">
-              Sorteiar Cruzamento 🔀
-            </button>
-          </div>
-
-          <template x-if="combinacaoAtual">
-            <div class="p-3 bg-stone-950/90 rounded-xl border border-amber-800/60 space-y-2">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                <div class="p-2 bg-stone-900 rounded-lg border border-stone-800">
-                  <span class="text-[9px] text-amber-400 block font-bold">Ideia / Semente A:</span>
-                  <span class="font-bold text-amber-100" x-text="combinacaoAtual.itemA"></span>
-                </div>
-                <div class="p-2 bg-stone-900 rounded-lg border border-stone-800">
-                  <span class="text-[9px] text-amber-400 block font-bold">Furto / Inspiração B:</span>
-                  <span class="font-bold text-amber-100" x-text="combinacaoAtual.itemB"></span>
-                </div>
-              </div>
-              <div class="p-2 bg-amber-950/60 rounded-lg text-amber-200 italic text-[10px]">
-                💡 <strong>Oportunidade de Cruzamento:</strong> Como você pode aplicar o conceito da Ideia A na estrutura do Furto B?
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <!-- LISTA DE TEMAS NA ESTEIRA -->
-        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1 text-xs">
-          <template x-for="(tema, idx) in esteiraTemas" :key="tema.id">
-            <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-900/40 space-y-2">
-              <div class="flex justify-between items-start border-b border-amber-900/30 pb-2">
-                <div>
-                  <h3 class="font-bold text-amber-300 text-sm" x-text="tema.titulo"></h3>
-                  <div class="flex gap-2 text-[10px] mt-0.5">
-                    <span class="bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800" x-text="'Fase: ' + tema.fase"></span>
-                    <span class="bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-800" x-text="tema.estagio"></span>
-                    <span class="bg-stone-900 text-stone-300 px-2 py-0.5 rounded-full border border-stone-700" x-text="'Destino: ' + tema.destino"></span>
-                  </div>
-                </div>
-                <button @click="removerTema(idx)" class="text-rose-400 font-bold">✕</button>
-              </div>
-
-              <div class="flex justify-between items-center text-[10px] pt-1">
-                <span class="text-amber-200/60">Avançar Estágio:</span>
-                <div class="flex gap-1">
-                  <button @click="mudarEstagioTema(idx, 'Semente')" class="px-2 py-1 rounded bg-stone-900 border border-stone-800 text-amber-300">🌱 Semente</button>
-                  <button @click="mudarEstagioTema(idx, 'Brotando')" class="px-2 py-1 rounded bg-amber-950 border border-amber-800 text-amber-300">🌿 Brotando</button>
-                  <button @click="mudarEstagioTema(idx, 'Floresceu')" class="px-2 py-1 rounded bg-emerald-950 border border-emerald-700 text-emerald-300">🌸 Floresceu</button>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </section>
-    </template>
-
-    <!-- ABA 4: DIÁRIO DE BORDO -->
-    <template x-if="abaAtiva === 'bordo'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in no-print">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo do Navio</h2>
-            <p class="text-[10px] text-amber-200/60 italic" x-text="'Navegação de: ' + diaDetalheChave"></p>
-          </div>
-          <button @click="saveState()" class="px-3 py-1 bg-amber-600 text-stone-950 font-bold rounded-xl text-xs shadow">
-            💾 Salvar Bordo
-          </button>
-        </div>
-
-        <div class="bg-amber-950/40 p-3.5 rounded-2xl border border-amber-600/50 space-y-1 text-xs">
-          <label class="block font-bold text-amber-300 flex items-center gap-1.5">
-            <span>🌟</span> Qual foi a melhor coisa que aconteceu hoje? (Nicholson Baker)
-          </label>
-          <textarea 
-            x-model="mosaico[diaDetalheChave].melhorCoisa" 
-            @input="saveState()" 
-            rows="2" 
-            placeholder="Ex: O café especial da tarde, a luz bonita na janela, o rascunho..." 
-            class="w-full p-2.5 bg-stone-950 border border-amber-900/60 rounded-xl text-amber-100 focus:outline-none mt-1"></textarea>
-        </div>
-
-        <div class="bg-stone-950/80 p-3.5 rounded-2xl border border-amber-900/40 space-y-2 text-xs">
-          <label class="block font-bold text-amber-200 flex items-center gap-1.5">
-            <span>⛵</span> O que aconteceu hoje? (Projetos, Lugares, Livros, Filmes)
-          </label>
-          <textarea 
-            x-model="mosaico[diaDetalheChave].acontecimentos" 
-            @input="saveState()" 
-            rows="3" 
-            placeholder="Ex: Trabalhei no widget da loja, almoço especial..." 
-            class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
-        </div>
-
-        <div class="bg-stone-950/80 p-3.5 rounded-2xl border border-amber-900/40 space-y-2 text-xs">
-          <label class="block font-bold text-amber-300 flex items-center gap-1.5">
-            <span>📸</span> Imagem / Registro Visual da Navegação:
-          </label>
-          <input type="file" accept="image/*" @change="uploadImagemDia($event)" class="w-full text-xs text-amber-200/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-700 file:text-stone-950 hover:file:bg-amber-600 cursor-pointer">
-
-          <template x-if="mosaico[diaDetalheChave] && mosaico[diaDetalheChave].imagem">
-            <div class="relative mt-2 rounded-2xl overflow-hidden border border-amber-500/50 max-h-48">
-              <img :src="mosaico[diaDetalheChave].imagem" class="w-full object-cover">
-              <button @click="removerImagemDia()" class="absolute top-2 right-2 bg-rose-950/80 text-rose-300 p-1 rounded-full text-xs font-bold">✕</button>
-            </div>
-          </template>
-        </div>
-      </section>
-    </template>
-
-    <!-- ABA 5: ARQUIVO DE FURTOS -->
-    <template x-if="abaAtiva === 'furtos'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in no-print">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">🏴‍☠️ Arquivo de Furtos (Swipe File)</h2>
-            <p class="text-[10px] text-amber-200/60 italic">Citações, imagens e inspirações para roubar como um artista</p>
-          </div>
-        </div>
-
-        <div class="bg-stone-950/90 p-4 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
-          <span class="font-bold text-amber-300 block">➕ Cadastrar Novo Furto Criativo:</span>
+        <!-- FORMULÁRIO DE CAPTURA COM TAGS -->
+        <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
+          <span class="font-bold text-amber-300 block">➕ Nova Captura / Roubo Criativo:</span>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" x-model="novoFurto.titulo" placeholder="Título / Ideia Principal" class="p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
-            <input type="text" x-model="novoFurto.fonte" placeholder="Fonte / Autor" class="p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+            <select x-model="novaCaptura.fonte" class="p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+              <template x-for="f in fontesMandala" :key="f.nome">
+                <option :value="f.nome" x-text="f.icon + ' ' + f.nome"></option>
+              </template>
+            </select>
+            <input type="text" x-model="novaCaptura.tags" placeholder="Tags separadas por vírgula (Ex: #tdah, #design)" class="p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
           </div>
 
-          <textarea x-model="novoFurto.conteudo" rows="2" placeholder="Descreva o insight ou citação..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+          <textarea x-model="novaCaptura.conteudo" rows="2" placeholder="O que você capturou ou roubou de interessante?" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
 
-          <div class="flex justify-between items-center gap-2">
-            <input type="file" accept="image/*" @change="uploadImagemFurto($event)" class="text-[10px] text-amber-200/70 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-stone-800 file:text-amber-300">
-            <button @click="adicionarFurto()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-yellow-600 text-stone-950 font-black rounded-xl uppercase text-[11px] shadow">
-              Guardar Furto
-            </button>
-          </div>
-        </div>
-
-        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1 text-xs">
-          <template x-for="(furto, idx) in arquivoFurtos" :key="furto.id">
-            <div class="p-3.5 rounded-2xl bg-stone-950/80 border border-amber-900/40 space-y-2">
-              <div class="flex justify-between items-start border-b border-amber-900/30 pb-1.5">
-                <div>
-                  <h3 class="font-bold text-amber-300" x-text="furto.titulo"></h3>
-                  <span class="text-[10px] text-amber-200/50 italic" x-text="'Fonte: ' + furto.fonte"></span>
-                </div>
-                <button @click="removerFurto(idx)" class="text-rose-400 font-bold hover:text-rose-300 text-xs">✕</button>
-              </div>
-              <p class="text-[11px] text-amber-100/90 whitespace-pre-wrap" x-text="furto.conteudo"></p>
-            </div>
-          </template>
-        </div>
-      </section>
-    </template>
-
-    <!-- ABA 6: REGULAÇÃO -->
-    <template x-if="abaAtiva === 'regulacao'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in no-print">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">🌡️ Regulação & Filtro "E Daí?"</h2>
-            <p class="text-[10px] text-amber-200/60 italic">Proteção para o seu cérebro e qualidade do trabalho</p>
-          </div>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-800/60 space-y-3 text-xs">
-          <span class="font-bold text-amber-300 block">🌡️ Termômetro de Sobrecarga</span>
-          <div class="space-y-1.5">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" x-model="regulacao.repetitivo" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
-              <span class="text-amber-200">É um padrão repetitivo ou travamento recorrente?</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" x-model="regulacao.sofrimento" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
-              <span class="text-amber-200">Causa sofrimento real / exaustão cognitiva?</span>
-            </label>
-          </div>
-        </div>
-      </section>
-    </template>
-
-    <!-- ABA 7: HISTÓRICO CONSOLIDADO E IMPRESSÃO (NOVO) -->
-    <template x-if="abaAtiva === 'historico'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in">
-        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2 no-print">
-          <div>
-            <h2 class="text-sm font-bold text-amber-300 lotr-title">📜 Histórico Geral de Registros</h2>
-            <p class="text-[10px] text-amber-200/60 italic">Consolidação completa de 2026</p>
-          </div>
-          <button @click="imprimirHistorico()" class="px-3 py-1.5 bg-amber-600 text-stone-950 font-extrabold text-xs rounded-xl shadow">
-            🖨️ Imprimir Histórico
+          <button @click="salvarCaptura()" class="w-full py-2 bg-amber-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+            💾 Guardar na Mandala de Captura
           </button>
         </div>
 
-        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1 text-xs">
-          <template x-for="reg in historicoOrdenado" :key="reg.data">
-            <div class="p-4 rounded-2xl bg-stone-950/80 border border-amber-900/40 space-y-2">
-              <div class="flex justify-between items-center border-b border-amber-900/30 pb-1">
-                <span class="font-bold text-amber-400 text-sm" x-text="reg.data"></span>
-                <div class="flex items-center gap-1">
-                  <template x-for="ico in reg.icones" :key="ico">
-                    <span class="text-xs" x-text="ico"></span>
-                  </template>
-                </div>
+        <!-- LISTA DE CAPTURAS -->
+        <div class="space-y-3 max-h-[400px] overflow-y-auto text-xs">
+          <template x-for="(cap, idx) in capturas" :key="cap.id">
+            <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-1.5">
+              <div class="flex justify-between items-center text-[10px]">
+                <span class="text-amber-400 font-bold" x-text="'Fonte: ' + cap.fonte"></span>
+                <span class="text-amber-200/50" x-text="cap.data"></span>
               </div>
-
-              <template x-if="reg.observacaoCalendario">
-                <div class="p-2 bg-stone-900/90 rounded-lg text-amber-300">
-                  <strong>📝 Observação rápida:</strong> <span x-text="reg.observacaoCalendario"></span>
-                </div>
-              </template>
-
-              <template x-if="reg.melhorCoisa">
-                <div class="p-2 bg-amber-950/40 rounded-lg text-amber-200">
-                  <strong>🌟 A melhor coisa do dia:</strong> <span x-text="reg.melhorCoisa"></span>
-                </div>
-              </template>
-
-              <template x-if="reg.acontecimentos">
-                <div class="p-2 bg-stone-900/60 rounded-lg text-amber-100/80">
-                  <strong>⛵ Bordo:</strong> <span x-text="reg.acontecimentos"></span>
-                </div>
-              </template>
+              <p class="text-amber-100" x-text="cap.conteudo"></p>
+              <div class="flex flex-wrap gap-1 pt-1">
+                <template x-for="tag in cap.tagsArray" :key="tag">
+                  <span class="text-[9px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800" x-text="tag"></span>
+                </template>
+              </div>
             </div>
           </template>
+        </div>
+      </section>
+    </template>
+
+    <!-- ABA 3: CONEXÕES & TRANSFORMAÇÃO DE RECLAMAÇÕES -->
+    <template x-if="abaAtiva === 'conexoes'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+        <div class="border-b border-amber-900/40 pb-2">
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🔀 Cruzamento de Ideias & Laboratório</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Junte tags, escreva hipóteses e transforme queixas em sistemas melhores</p>
+        </div>
+
+        <!-- RECLAMAÇÃO -> SOFTWARE MELHOR -->
+        <div class="p-4 bg-rose-950/30 border border-rose-800/50 rounded-2xl space-y-2 text-xs">
+          <span class="font-bold text-rose-300 block">💡 Transformador de Reclamações (Modo Gertrudes $\rightarrow$ Solução)</span>
+          <p class="text-[10px] text-amber-200/60 italic">"A melhor maneira de reclamar de um software é criando um software melhor."</p>
+
+          <input type="text" x-model="queixa.reclamacao" placeholder="Do que você quer reclamar hoje? (Qual a insatisfação?)" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+          <textarea x-model="queixa.solucao" rows="2" placeholder="Como seria a solução ideal que resolve essa dor?" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+
+          <button @click="salvarQueixaComoIdeia()" class="w-full py-2 bg-rose-700 hover:bg-rose-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+            ⚡ Transformar Reclamação em Ideia de Projeto/Post
+          </button>
+        </div>
+
+        <!-- PAINEL LIVRE DE CRUZAMENTO -->
+        <div class="p-4 bg-stone-950/90 border border-amber-800/60 rounded-2xl space-y-3 text-xs">
+          <span class="font-bold text-amber-300 block">🎨 Painel de Escrita & Imagem de Conexão:</span>
+          
+          <textarea x-model="novoCruzamento.texto" rows="3" placeholder="Escreva sobre a fusão das tags e ideias..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+
+          <div class="flex justify-between items-center">
+            <input type="file" accept="image/*" @change="uploadImagemCruzamento($event)" class="text-[10px] text-amber-200/70">
+            <button @click="salvarCruzamento()" class="px-4 py-2 bg-amber-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+              Guardar Conexão
+            </button>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ABA 4: DIÁRIO DE BORDO VIVO (INÍCIO / MEIO / FIM) -->
+    <template x-if="abaAtiva === 'bordo'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+        <div class="border-b border-amber-900/40 pb-2">
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo Vivo</h2>
+          <p class="text-[10px] text-amber-200/60 italic">O que estou fazendo agora + Ideias de post por etapa</p>
+        </div>
+
+        <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-amber-300 mb-1">Projeto / Foco Atual:</label>
+            <input type="text" x-model="bordoVivo.projeto" placeholder="Ex: Desenho do Widget do Canva / Estudo do ENEM" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+          </div>
+
+          <div>
+            <label class="block font-bold text-amber-300 mb-1">Etapa Atual do Processo:</label>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <button @click="bordoVivo.etapa = 'Inicio'" :class="bordoVivo.etapa === 'Inicio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌱 Início (Inspirações)</button>
+              <button @click="bordoVivo.etapa = 'Meio'" :class="bordoVivo.etapa === 'Meio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🔨 Meio (Bastidores/Croquis)</button>
+              <button @click="bordoVivo.etapa = 'Fim'" :class="bordoVivo.etapa === 'Fim' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌸 Fim (Resultado/Erros)</button>
+            </div>
+          </div>
+
+          <!-- SUGESTÃO AUTOMÁTICA DE IDEIA DE POST -->
+          <div class="p-3 bg-amber-950/50 rounded-xl border border-amber-700/50 text-amber-200 text-[11px] space-y-1">
+            <span class="font-bold text-amber-300 block">💡 Sugestão de Conteúdo para esta Etapa:</span>
+            <template x-if="bordoVivo.etapa === 'Inicio'">
+              <p>Poste sobre as referências do seu "gabinete de curiosidades", o livro que inspirou ou a pergunta inicial.</p>
+            </template>
+            <template x-if="bordoVivo.etapa === 'Meio'">
+              <p>Poste um print do rascunho, a mesa bagunçada, o diagrama ou uma foto do processo sem compromisso de perfeição.</p>
+            </template>
+            <template x-if="bordoVivo.etapa === 'Fim'">
+              <p>Mostre o produto concluído, o que foi descartado durante o processo e a principal lição aprendida.</p>
+            </template>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ABA 5: ESTEIRA FINAL & RODA DE REDES -->
+    <template x-if="abaAtiva === 'esteira'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+        <div class="border-b border-amber-900/40 pb-2">
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🚀 Esteira Final & Publicador</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Mapeie onde o arquivo está salvo e qual rede social receberá</p>
+        </div>
+
+        <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
+          <input type="text" x-model="esteiraPublicar.titulo" placeholder="Título do Conteúdo Pronto / Rascunho" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] text-amber-300 mb-1">Onde está salvo?</label>
+              <input type="text" x-model="esteiraPublicar.ondeSalvo" placeholder="Ex: Canva Pasta X, PC, Google Drive" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+            </div>
+            <div>
+              <label class="block text-[10px] text-amber-300 mb-1">Estado do Material:</label>
+              <select x-model="esteiraPublicar.estado" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
+                <option value="Rascunho Solto">📝 Rascunho Solto</option>
+                <option value="Layout em Produção">🎨 Layout em Produção</option>
+                <option value="Pronto para Postar">✅ Pronto para Postar</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] text-amber-300 mb-1">Rede Social / Destino:</label>
+            <select x-model="esteiraPublicar.rede" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 font-bold">
+              <option value="Instagram Studio Feed">📸 Instagram Studio (Feed)</option>
+              <option value="Instagram Studio Stories">📱 Instagram Studio (Stories)</option>
+              <option value="Instagram Studio Reels">🎬 Instagram Studio (Reels)</option>
+              <option value="Instagram Pessoal Feed">👤 Instagram Pessoal (Feed)</option>
+              <option value="Blog">🌐 Blog</option>
+              <option value="Threads">💬 Threads</option>
+              <option value="WhatsApp">🟢 WhatsApp / Grupo</option>
+            </select>
+          </div>
+
+          <button @click="salvarNaEsteiraFinal()" class="w-full py-2 bg-gradient-to-r from-amber-600 to-yellow-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+            🚀 Registrar Conteúdo na Esteira
+          </button>
         </div>
       </section>
     </template>
 
   </div>
 
-  <!-- LÓGICA DO APP & FIREBASE COMPAT -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBoCzavo5Poj1kjKZbJ9rUwkLQyyjpMgmI",
@@ -483,176 +310,141 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    function jardimCriativoHub() {
+    function laboratorioCriacaoApp() {
       return {
         salvando: false,
         abaAtiva: 'mosaico',
         mesAtualIndex: new Date().getMonth(),
-        modoEdicaoLegenda: false,
         diaDetalheChave: new Date().toISOString().split('T')[0],
         mosaico: {},
-        arquivoFurtos: [],
-        esteiraTemas: [],
-        modalNovoTema: false,
-        combinacaoAtual: null,
+        capturas: [],
+        conexoes: [],
+        esteiraFinal: [],
 
-        novoTema: { titulo: '', fase: 'Inicio', estagio: 'Semente', destino: 'Instagram Feed' },
-        novoFurto: { titulo: '', fonte: '', conteudo: '' },
-        tempImagemFurto: null,
-
-        regulacao: { repetitivo: false, sofrimento: false, conversado: false, edai_util: false, edai_conforto: false, edai_credito: false },
+        novaCaptura: { fonte: 'Pesquisas', tags: '', conteudo: '' },
+        queixa: { reclamacao: '', solucao: '' },
+        novoCruzamento: { texto: '', imagem: null },
+        bordoVivo: { projeto: '', etapa: 'Meio' },
+        esteiraPublicar: { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' },
 
         nomesMeses: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
 
         fontesMandala: [
-          { nome: 'Pesquisas', categoria: 'Bastidor', icon: '🔍' },
-          { nome: 'Referências', categoria: 'Gabinete', icon: '📚' },
-          { nome: 'Desenhos', categoria: 'Bastidor', icon: '✏️' },
-          { nome: 'Planos', categoria: 'Estrutura', icon: '🗺️' },
-          { nome: 'Rabiscos', categoria: 'Bastidor', icon: '🎨' },
-          { nome: 'Protótipos', categoria: 'Experimento', icon: '🛠️' },
-          { nome: 'Diagramas', categoria: 'Estrutura', icon: '📊' },
-          { nome: 'Notas Rápidas', categoria: 'Ideia', icon: '📝' },
-          { nome: 'Fotografias', categoria: 'Visual', icon: '📸' },
-          { nome: 'Lixo de Projetos', categoria: 'Reciclagem', icon: '♻️' },
-          { nome: 'O que estou Aprendendo', categoria: 'Processo', icon: '🧠' },
-          { nome: 'O que estou Fazendo', categoria: 'Bastidor', icon: '🔨' },
-          { nome: 'Livros', categoria: 'Gabinete', icon: '📖' },
-          { nome: 'TV, Filmes & Séries', categoria: 'Cultura', icon: '🎬' },
-          { nome: 'Sites & Newsletters', categoria: 'Gabinete', icon: '🌐' },
-          { nome: 'Mesa / Ambiente Físico', categoria: 'Realidade', icon: '🪴' },
-          { nome: 'Insights de Conversas', categoria: 'Humano', icon: '💬' },
-          { nome: 'Posts & Interações', categoria: 'Fluxo', icon: '📱' },
-          { nome: 'Padrão dos Meus Posts', categoria: 'Estoque', icon: '📋' },
-          { nome: 'Curtidos & Salvos', categoria: 'Inspirante', icon: '⭐' },
-          { nome: 'Pinterest', categoria: 'Visual', icon: '📌' },
-          { nome: 'Rascunhos do Blog', categoria: 'Escrita', icon: '✍️' },
-          { nome: 'Pasta do Trello', categoria: 'Organização', icon: '🗂️' },
-          { nome: 'Arquivos do PC', categoria: 'Memória', icon: '💻' },
-          { nome: 'Arquivos do Canva', categoria: 'Design', icon: '🎨' }
+          { nome: 'Pesquisas', icon: '🔍' }, { nome: 'Referências', icon: '📚' },
+          { nome: 'Desenhos', icon: '✏️' }, { nome: 'Planos', icon: '🗺️' },
+          { nome: 'Rabiscos', icon: '🎨' }, { nome: 'Protótipos', icon: '🛠️' },
+          { nome: 'Diagramas', icon: '📊' }, { nome: 'Notas Rápidas', icon: '📝' },
+          { nome: 'Fotografias', icon: '📸' }, { nome: 'Lixo de Projetos', icon: '♻️' },
+          { nome: 'O que estou Aprendendo', icon: '🧠' }, { nome: 'O que estou Fazendo', icon: '🔨' },
+          { nome: 'Livros', icon: '📖' }, { nome: 'TV & Filmes', icon: '🎬' },
+          { nome: 'Sites & Newsletters', icon: '🌐' }, { nome: 'Mesa / Físico', icon: '🪴' },
+          { nome: 'Insights de Conversas', icon: '💬' }, { nome: 'Posts & Interações', icon: '📱' },
+          { nome: 'Padrões de Posts', icon: '📋' }, { nome: 'Curtidos & Salvos', icon: '⭐' },
+          { nome: 'Pinterest', icon: '📌' }, { nome: 'Rascunhos do Blog', icon: '✍️' },
+          { nome: 'Trello', icon: '🗂️' }, { nome: 'Arquivos do PC', icon: '💻' },
+          { nome: 'Arquivos do Canva', icon: '🎨' }
         ],
 
         legendas: [
-          { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', hex: '#34d399', bg: 'bg-emerald-400 border-emerald-300' },
-          { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', hex: '#38bdf8', bg: 'bg-sky-400 border-sky-300' },
-          { id: 'ideia', nome: 'Tive uma Ideia', icon: '🟨', hex: '#fde047', bg: 'bg-amber-300 border-yellow-200' },
-          { id: 'desenhei', nome: 'Desenhei / Design', icon: '🟪', hex: '#c084fc', bg: 'bg-purple-400 border-purple-300' },
-          { id: 'incubacao', nome: 'Incubei o Projeto', icon: '🟥', hex: '#fb7185', bg: 'bg-rose-400 border-rose-300' },
-          { id: 'descanso', nome: 'Descansei de Propósito', icon: '⬜', hex: '#d6d3d1', bg: 'bg-stone-300 border-stone-100' }
+          { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', hex: '#34d399' },
+          { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', hex: '#38bdf8' },
+          { id: 'ideia', nome: 'Tive uma Ideia', icon: '🟨', hex: '#fde047' },
+          { id: 'desenhei', nome: 'Desenhei / Design', icon: '🟪', hex: '#c084fc' },
+          { id: 'incubacao', nome: 'Incubei o Projeto', icon: '🟥', hex: '#fb7185' },
+          { id: 'descanso', nome: 'Descansei', icon: '⬜', hex: '#d6d3d1' }
         ],
 
         get diasDoMes() {
           const ano = 2026;
           const primeiroDiaSemana = new Date(ano, this.mesAtualIndex, 1).getDay();
           const totalDiasNoMes = new Date(ano, this.mesAtualIndex + 1, 0).getDate();
-
           let lista = [];
-          for (let i = 0; i < primeiroDiaSemana; i++) {
-            lista.push({ numero: '', chave: `vazio_${i}`, valido: false });
-          }
+          for (let i = 0; i < primeiroDiaSemana; i++) lista.push({ numero: '', chave: `vazio_${i}`, valido: false });
           for (let d = 1; d <= totalDiasNoMes; d++) {
             const mesStr = String(this.mesAtualIndex + 1).padStart(2, '0');
             const diaStr = String(d).padStart(2, '0');
-            const chave = `2026-${mesStr}-${diaStr}`;
-            lista.push({ numero: d, chave: chave, valido: true });
+            lista.push({ numero: d, chave: `2026-${mesStr}-${diaStr}`, valido: true });
           }
           return lista;
         },
 
-        get historicoOrdenado() {
-          return Object.keys(this.mosaico)
-            .filter(k => this.mosaico[k] && ( (this.mosaico[k].tipos && this.mosaico[k].tipos.length > 0) || this.mosaico[k].observacaoCalendario || this.mosaico[k].melhorCoisa || this.mosaico[k].acontecimentos ))
-            .sort().reverse()
-            .map(chave => {
-              const item = this.mosaico[chave];
-              const tipos = item.tipos || [];
-              const icones = tipos.map(tId => {
-                const leg = this.legendas.find(l => l.id === tId);
-                return leg ? leg.icon : '';
-              });
-              return {
-                data: chave,
-                icones: icones,
-                observacaoCalendario: item.observacaoCalendario || '',
-                melhorCoisa: item.melhorCoisa || '',
-                acontecimentos: item.acontecimentos || ''
-              };
-            });
-        },
-
         async initApp() {
-          const cache = localStorage.getItem('jardim_hub_completo_backup');
+          const cache = localStorage.getItem('laboratorio_criacao_backup');
           if (cache) {
             try {
               const parsed = JSON.parse(cache);
               this.mosaico = parsed.mosaico || {};
-              this.arquivoFurtos = parsed.arquivoFurtos || [];
-              this.esteiraTemas = parsed.esteiraTemas || [];
-              this.regulacao = parsed.regulacao || this.regulacao;
-              if (parsed.legendas) this.legendas = parsed.legendas;
+              this.capturas = parsed.capturas || [];
+              this.conexoes = parsed.conexoes || [];
+              this.esteiraFinal = parsed.esteiraFinal || [];
             } catch(e) {}
           }
 
-          db.collection("modo_casa").doc("jardim_hub_completo").onSnapshot((docSnap) => {
+          db.collection("modo_casa").doc("laboratorio_criacao").onSnapshot((docSnap) => {
             if (docSnap.exists) {
               const data = docSnap.data();
               if (data.mosaico) this.mosaico = data.mosaico;
-              if (data.arquivoFurtos) this.arquivoFurtos = data.arquivoFurtos;
-              if (data.esteiraTemas) this.esteiraTemas = data.esteiraTemas;
-              if (data.regulacao) this.regulacao = data.regulacao;
-              if (data.legendas) this.legendas = data.legendas;
+              if (data.capturas) this.capturas = data.capturas;
+              if (data.conexoes) this.conexoes = data.conexoes;
+              if (data.esteiraFinal) this.esteiraFinal = data.esteiraFinal;
             }
           });
 
           if (!this.mosaico[this.diaDetalheChave]) {
-            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
+            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '' };
           }
         },
 
         selecionarDiaParaEditar(chave) {
           this.diaDetalheChave = chave;
-          if (!this.mosaico[chave]) {
-            this.mosaico[chave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
-          }
+          if (!this.mosaico[chave]) this.mosaico[chave] = { tipos: [], observacaoCalendario: '' };
         },
 
-        alternarLegendaNoDia(catId) {
-          if (!this.mosaico[this.diaDetalheChave]) {
-            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
-          }
-          let tipos = this.mosaico[this.diaDetalheChave].tipos || [];
-          if (tipos.includes(catId)) {
-            tipos = tipos.filter(t => t !== catId);
-          } else {
-            tipos.push(catId);
-          }
-          this.mosaico[this.diaDetalheChave].tipos = tipos;
+        enviarObsParaCaptura() {
+          const obs = this.mosaico[this.diaDetalheChave].observacaoCalendario;
+          if (!obs) return alert('Escreva uma observação no dia antes de enviar.');
+          this.novaCaptura.conteudo = obs;
+          this.novaCaptura.fonte = 'Notas Rápidas';
+          this.abaAtiva = 'captura';
+        },
+
+        salvarCaptura() {
+          if (!this.novaCaptura.conteudo) return alert('Insira um conteúdo para a captura.');
+          const tagsArr = this.novaCaptura.tags.split(',').map(t => t.trim()).filter(t => t);
+          this.capturas.unshift({
+            id: 'c_' + Date.now(),
+            fonte: this.novaCaptura.fonte,
+            conteudo: this.novaCaptura.conteudo,
+            tagsArray: tagsArr,
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+          this.novaCaptura = { fonte: 'Pesquisas', tags: '', conteudo: '' };
           this.saveState();
         },
 
-        gerarCombinacaoAleatoria() {
-          const temasValidos = this.esteiraTemas.length > 0 ? this.esteiraTemas : [{ titulo: 'Design do Studio Bárbara' }, { titulo: 'Psicologia e Comportamento' }];
-          const furtosValidos = this.arquivoFurtos.length > 0 ? this.arquivoFurtos : [{ titulo: 'Frase do Austin Kleon' }, { titulo: 'Layout Minimalista de Organização' }];
-
-          const randomA = temasValidos[Math.floor(Math.random() * temasValidos.length)].titulo;
-          const randomB = furtosValidos[Math.floor(Math.random() * furtosValidos.length)].titulo;
-
-          this.combinacaoAtual = { itemA: randomA, itemB: randomB };
+        salvarQueixaComoIdeia() {
+          if (!this.queixa.reclamacao) return alert('Preencha a reclamação.');
+          this.capturas.unshift({
+            id: 'c_' + Date.now(),
+            fonte: 'Modo Gertrudes / Software Melhor',
+            conteudo: `🚨 Reclamação: ${this.queixa.reclamacao} | 💡 Solução Ideal: ${this.queixa.solucao}`,
+            tagsArray: ['#solucao', '#software-melhor'],
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+          this.queixa = { reclamacao: '', solucao: '' };
+          this.abaAtiva = 'captura';
+          this.saveState();
         },
 
-        capturarPelaFonte(fonte) {
-          this.novoTema.titulo = `Captura via [${fonte.nome}]`;
-          this.abaAtiva = 'esteira';
-          this.modalNovoTema = true;
+        salvarNaEsteiraFinal() {
+          if (!this.esteiraPublicar.titulo) return alert('Insira o título do conteúdo.');
+          this.esteiraFinal.unshift({ ...this.esteiraPublicar, id: 'e_' + Date.now() });
+          this.esteiraPublicar = { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' };
+          this.saveState();
+          alert('🚀 Registrado na esteira final com sucesso!');
         },
 
-        imprimirHistorico() {
-          window.print();
-        },
-
-        temCor(chave) {
-          return this.mosaico[chave] && this.mosaico[chave].tipos && this.mosaico[chave].tipos.length > 0;
-        },
+        temCor(chave) { return this.mosaico[chave] && this.mosaico[chave].tipos && this.mosaico[chave].tipos.length > 0; },
 
         obterEstiloGradienteDia(chave) {
           if (!this.temCor(chave)) return '';
@@ -662,33 +454,15 @@
             return leg ? leg.hex : '#78716c';
           });
           if (cores.length === 1) return `background-color: ${cores[0]};`;
-
-          const percentualPorCor = 100 / cores.length;
+          const percentual = 100 / cores.length;
           let stops = [];
-          cores.forEach((cor, idx) => {
-            const inicio = (idx * percentualPorCor).toFixed(1);
-            const fim = ((idx + 1) * percentualPorCor).toFixed(1);
-            stops.push(`${cor} ${inicio}% ${fim}%`);
-          });
+          cores.forEach((cor, idx) => stops.push(`${cor} ${(idx * percentual).toFixed(1)}% ${((idx + 1) * percentual).toFixed(1)}%`));
           return `background: linear-gradient(to bottom, ${stops.join(', ')});`;
         },
 
-        obterIconesDia(chave) {
-          if (!this.temCor(chave)) return [];
-          const tipos = this.mosaico[chave].tipos;
-          return tipos.map(tId => {
-            const leg = this.legendas.find(l => l.id === tId);
-            return leg ? leg.icon : '';
-          });
-        },
-
         salvarLocal() {
-          localStorage.setItem('jardim_hub_completo_backup', JSON.stringify({
-            mosaico: this.mosaico,
-            legendas: this.legendas,
-            arquivoFurtos: this.arquivoFurtos,
-            esteiraTemas: this.esteiraTemas,
-            regulacao: this.regulacao
+          localStorage.setItem('laboratorio_criacao_backup', JSON.stringify({
+            mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal
           }));
         },
 
@@ -696,18 +470,12 @@
           this.salvando = true;
           this.salvarLocal();
           try {
-            await db.collection("modo_casa").doc("jardim_hub_completo").set({
-              mosaico: this.mosaico,
-              legendas: this.legendas,
-              arquivoFurtos: this.arquivoFurtos,
-              esteiraTemas: this.esteiraTemas,
-              regulacao: this.regulacao,
+            await db.collection("modo_casa").doc("laboratorio_criacao").set({
+              mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal,
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
             this.salvando = false;
-          } catch(e) {
-            this.salvando = false;
-          }
+          } catch(e) { this.salvando = false; }
         }
       }
     }
