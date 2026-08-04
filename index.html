@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌱 Laboratório de Criação — Rivendell OS</title>
+  <title>🌱 Laboratório Criativo — Rivendell OS</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -39,6 +39,12 @@
       background: rgba(8, 12, 9, 0.85);
       border: 1px solid rgba(212, 175, 55, 0.2);
     }
+    @media print {
+      body { background: #fff !important; color: #000 !important; font-family: sans-serif !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .glass-card, .glass-inner { background: none !important; border: 1px solid #aaa !important; box-shadow: none !important; color: #000 !important; }
+    }
   </style>
 </head>
 <body class="p-2 sm:p-5" x-data="laboratorioCriacaoApp()" x-init="initApp()">
@@ -46,9 +52,9 @@
   <div class="max-w-3xl mx-auto space-y-4">
 
     <!-- CABEÇALHO DO HUB CRIATIVO -->
-    <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 text-center space-y-2">
+    <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 text-center space-y-2 no-print">
       <div class="flex justify-between items-center text-[10px] lotr-sub font-bold">
-        <span class="text-emerald-400">Ateliê Criativo • Laboratório de Sistemas</span>
+        <span class="text-emerald-400">Ateliê Criativo • NeuroOrganizer OS</span>
         <div class="flex items-center gap-2">
           <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Sync...</span>
           <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
@@ -60,31 +66,37 @@
       </h1>
       <p class="text-xs text-amber-200/70 italic">"Reclame criando algo melhor. Transforme bastidores em estoque."</p>
 
-      <!-- BARRA DE ABAS DO SISTEMA -->
-      <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-5 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
-        <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
+      <!-- BARRA DE NAVEGAÇÃO DE 7 ABAS -->
+      <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-4 sm:grid-cols-7 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
+        <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
           🧩 Mosaico
         </button>
-        <button @click="abaAtiva = 'captura'" :class="abaAtiva === 'captura' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
-          🎯 Captura & Furtos
+        <button @click="abaAtiva = 'captura'" :class="abaAtiva === 'captura' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          🎯 Captura (25)
         </button>
-        <button @click="abaAtiva = 'conexoes'" :class="abaAtiva === 'conexoes' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
-          🔀 Conexões & Tags
+        <button @click="abaAtiva = 'conexoes'" :class="abaAtiva === 'conexoes' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          🔀 Conexões
         </button>
-        <button @click="abaAtiva = 'bordo'" :class="abaAtiva === 'bordo' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
-          ⛵ Diário de Bordo
+        <button @click="abaAtiva = 'bordo'" :class="abaAtiva === 'bordo' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          ⛵ Bordo
         </button>
-        <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
-          🚀 Esteira & Redes
+        <button @click="abaAtiva = 'esteira'" :class="abaAtiva === 'esteira' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          🚀 Esteira
+        </button>
+        <button @click="abaAtiva = 'regulacao'" :class="abaAtiva === 'regulacao' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          🌡️ Regulação
+        </button>
+        <button @click="abaAtiva = 'historico'" :class="abaAtiva === 'historico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          📜 Histórico
         </button>
       </nav>
     </header>
 
-    <!-- ABA 1: MOSAICO + LEGENDAS DE REGA COLORIDAS + OBSERVAÇÃO -->
+    <!-- ABA 1: MOSAICO VISUAL + LEGENDAS COLORIDAS + OBSERVAÇÃO DO DIA -->
     <template x-if="abaAtiva === 'mosaico'">
-      <div class="space-y-4">
+      <div class="space-y-4 no-print">
 
-        <!-- 🎨 LEGENDAS DA CRIATIVIDADE (VOLTARAM!) -->
+        <!-- 🎨 LEGENDAS DE REGA (MULTI-SELEÇÃO E EDIÇÃO) -->
         <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
           <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
             <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas de Rega (Multi-Seleção)</span>
@@ -185,10 +197,10 @@
 
     <!-- ABA 2: CAPTURA & FURTOS UNIFICADOS (25 FONTES) -->
     <template x-if="abaAtiva === 'captura'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
           <h2 class="text-sm font-bold text-amber-300 lotr-title">🎯 Banco de Captura & Furtos (25 Fontes)</h2>
-          <p class="text-[10px] text-amber-200/60 italic">Catalogado com tags de assunto para cruzamentos futuros</p>
+          <p class="text-[10px] text-amber-200/60 italic">Catalogado com tags de assunto e imagens para cruzamentos</p>
         </div>
 
         <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
@@ -205,19 +217,39 @@
 
           <textarea x-model="novaCaptura.conteudo" rows="2" placeholder="O que você capturou ou roubou de interessante?" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
 
-          <button @click="salvarCaptura()" class="w-full py-2 bg-amber-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
-            💾 Guardar na Mandala de Captura
-          </button>
+          <div class="flex justify-between items-center gap-2">
+            <input type="file" accept="image/*" @change="uploadImagemCaptura($event)" class="text-[10px] text-amber-200/70 file:mr-2 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-stone-800 file:text-amber-300">
+            <button @click="salvarCaptura()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black rounded-xl uppercase text-[10px] shadow">
+              💾 Guardar Captura
+            </button>
+          </div>
+
+          <template x-if="tempImagemCaptura">
+            <div class="mt-2 rounded-xl overflow-hidden max-h-32 border border-amber-700/50">
+              <img :src="tempImagemCaptura" class="w-full object-cover">
+            </div>
+          </template>
         </div>
 
+        <!-- LISTA DE CAPTURAS SALVAS -->
         <div class="space-y-3 max-h-[400px] overflow-y-auto text-xs">
           <template x-for="(cap, idx) in capturas" :key="cap.id">
-            <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-1.5">
+            <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-2">
               <div class="flex justify-between items-center text-[10px]">
                 <span class="text-amber-400 font-bold" x-text="'Fonte: ' + cap.fonte"></span>
-                <span class="text-amber-200/50" x-text="cap.data"></span>
+                <div class="flex items-center gap-2">
+                  <span class="text-amber-200/50" x-text="cap.data"></span>
+                  <button @click="removerCaptura(idx)" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+                </div>
               </div>
-              <p class="text-amber-100" x-text="cap.conteudo"></p>
+              <p class="text-amber-100 whitespace-pre-wrap" x-text="cap.conteudo"></p>
+
+              <template x-if="cap.imagem">
+                <div class="rounded-xl overflow-hidden border border-amber-900/40 max-h-44 mt-1">
+                  <img :src="cap.imagem" class="w-full object-cover">
+                </div>
+              </template>
+
               <div class="flex flex-wrap gap-1 pt-1">
                 <template x-for="tag in cap.tagsArray" :key="tag">
                   <span class="text-[9px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800" x-text="tag"></span>
@@ -229,16 +261,47 @@
       </section>
     </template>
 
-    <!-- ABA 3: CONEXÕES & TRANSFORMAÇÃO DE RECLAMAÇÕES -->
+    <!-- ABA 3: CONEXÕES, SORTEADOR & TRANSFORMAÇÃO DE RECLAMAÇÕES -->
     <template x-if="abaAtiva === 'conexoes'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
           <h2 class="text-sm font-bold text-amber-300 lotr-title">🔀 Cruzamento de Ideias & Laboratório</h2>
-          <p class="text-[10px] text-amber-200/60 italic">Junte tags, escreva hipóteses e transforme queixas em sistemas melhores</p>
+          <p class="text-[10px] text-amber-200/60 italic">Combine ideias, sorteie conexões e transforme queixas em soluções</p>
         </div>
 
+        <!-- 🎲 MOTOR DE COMBINAÇÃO ALEATÓRIA -->
+        <div class="p-4 rounded-2xl bg-amber-950/40 border border-amber-600/60 space-y-3 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-amber-300 flex items-center gap-1.5">
+              <span>🎲</span> Motor de Combinação Criativa
+            </span>
+            <button @click="gerarCombinacaoAleatoria()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold rounded-xl text-[10px]">
+              Sorteiar Cruzamento 🔀
+            </button>
+          </div>
+
+          <template x-if="combinacaoAtual">
+            <div class="p-3 bg-stone-950/90 rounded-xl border border-amber-800/60 space-y-2">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div class="p-2 bg-stone-900 rounded-lg border border-stone-800">
+                  <span class="text-[9px] text-amber-400 block font-bold">Item Capturado A:</span>
+                  <span class="font-bold text-amber-100" x-text="combinacaoAtual.itemA"></span>
+                </div>
+                <div class="p-2 bg-stone-900 rounded-lg border border-stone-800">
+                  <span class="text-[9px] text-amber-400 block font-bold">Item Capturado B:</span>
+                  <span class="font-bold text-amber-100" x-text="combinacaoAtual.itemB"></span>
+                </div>
+              </div>
+              <div class="p-2 bg-amber-950/60 rounded-lg text-amber-200 italic text-[10px]">
+                💡 <strong>Oportunidade de Cruzamento:</strong> Como você pode aplicar a solução do Item A no formato do Item B?
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- ⚡ RECLAMAÇÃO -> SOFTWARE MELHOR -->
         <div class="p-4 bg-rose-950/30 border border-rose-800/50 rounded-2xl space-y-2 text-xs">
-          <span class="font-bold text-rose-300 block">💡 Transformador de Reclamações (Modo Gertrudes $\rightarrow$ Solução)</span>
+          <span class="font-bold text-rose-300 block">💡 Transformador de Reclamações (Modo Gertrudes → Solução)</span>
           <p class="text-[10px] text-amber-200/60 italic">"A melhor maneira de reclamar de um software é criando um software melhor."</p>
 
           <input type="text" x-model="queixa.reclamacao" placeholder="Do que você quer reclamar hoje? (Qual a insatisfação?)" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
@@ -248,29 +311,114 @@
             ⚡ Transformar Reclamação em Ideia de Projeto/Post
           </button>
         </div>
+
+        <!-- 🎨 PAINEL LIVRE DE ESCRITA & IMAGEM DE CONEXÃO -->
+        <div class="p-4 bg-stone-950/90 border border-amber-800/60 rounded-2xl space-y-3 text-xs">
+          <span class="font-bold text-amber-300 block">🎨 Registrar Nova Fusão / Hipótese:</span>
+          
+          <textarea x-model="novoCruzamento.texto" rows="2" placeholder="Escreva sobre a fusão das ideias..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+
+          <div class="flex justify-between items-center gap-2">
+            <input type="file" accept="image/*" @change="uploadImagemCruzamento($event)" class="text-[10px] text-amber-200/70">
+            <button @click="salvarCruzamento()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-stone-950 font-black rounded-xl uppercase text-[10px] shadow">
+              Guardar Conexão
+            </button>
+          </div>
+
+          <template x-if="tempImagemCruzamento">
+            <div class="mt-2 rounded-xl overflow-hidden max-h-32 border border-amber-700/50">
+              <img :src="tempImagemCruzamento" class="w-full object-cover">
+            </div>
+          </template>
+        </div>
+
+        <!-- LISTA DE CONEXÕES SALVAS -->
+        <div class="space-y-3 max-h-[350px] overflow-y-auto text-xs">
+          <template x-for="(con, idx) in conexoes" :key="con.id">
+            <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-2">
+              <div class="flex justify-between items-center text-[10px]">
+                <span class="text-amber-300 font-bold" x-text="'Conexão registrada em: ' + con.data"></span>
+                <button @click="removerConexao(idx)" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+              </div>
+              <p class="text-amber-100 whitespace-pre-wrap" x-text="con.texto"></p>
+              <template x-if="con.imagem">
+                <div class="rounded-xl overflow-hidden border border-amber-900/40 max-h-44 mt-1">
+                  <img :src="con.imagem" class="w-full object-cover">
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
       </section>
     </template>
 
-    <!-- ABA 4: DIÁRIO DE BORDO VIVO (INÍCIO / MEIO / FIM) -->
+    <!-- ABA 4: DIÁRIO DE BORDO VIVO (POR DATA + NICHOLSON BAKER + FOTOS) -->
     <template x-if="abaAtiva === 'bordo'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
-        <div class="border-b border-amber-900/40 pb-2">
-          <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo Vivo</h2>
-          <p class="text-[10px] text-amber-200/60 italic">O que estou fazendo agora + Ideias de post por etapa</p>
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
+        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-amber-300 lotr-title">⛵ Diário de Bordo Vivo</h2>
+            <p class="text-[10px] text-amber-200/60 italic" x-text="'Navegação da data: ' + diaDetalheChave"></p>
+          </div>
+          <button @click="saveState()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold rounded-xl text-xs shadow">
+            💾 Salvar Bordo
+          </button>
         </div>
 
+        <!-- 🌟 PERGUNTA DE NICHOLSON BAKER -->
+        <div class="bg-amber-950/40 p-3.5 rounded-2xl border border-amber-600/50 space-y-1 text-xs">
+          <label class="block font-bold text-amber-300 flex items-center gap-1.5">
+            <span>🌟</span> Qual foi a melhor coisa que aconteceu hoje? (Nicholson Baker)
+          </label>
+          <p class="text-[10px] text-amber-200/60 italic">"Uma forma particular de lembrar como a luz entrava..."</p>
+          <textarea 
+            x-model="mosaico[diaDetalheChave].melhorCoisa" 
+            @input="saveState()" 
+            rows="2" 
+            placeholder="Ex: O café especial da tarde, a luz bonita na janela, a conversa..." 
+            class="w-full p-2.5 bg-stone-950 border border-amber-900/60 rounded-xl text-amber-100 focus:outline-none mt-1"></textarea>
+        </div>
+
+        <!-- O QUE ACONTECEU -->
+        <div class="bg-stone-950/80 p-3.5 rounded-2xl border border-amber-900/40 space-y-2 text-xs">
+          <label class="block font-bold text-amber-200 flex items-center gap-1.5">
+            <span>⛵</span> O que aconteceu hoje? (Projetos, Lugares, Livros, Filmes)
+          </label>
+          <textarea 
+            x-model="mosaico[diaDetalheChave].acontecimentos" 
+            @input="saveState()" 
+            rows="3" 
+            placeholder="Ex: Trabalhei no widget do Notion, almoço especial..." 
+            class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+        </div>
+
+        <!-- UPLOAD DE IMAGEM DO DIA -->
+        <div class="bg-stone-950/80 p-3.5 rounded-2xl border border-amber-900/40 space-y-2 text-xs">
+          <label class="block font-bold text-amber-300 flex items-center gap-1.5">
+            <span>📸</span> Imagem / Registro Visual da Navegação:
+          </label>
+          <input type="file" accept="image/*" @change="uploadImagemDia($event)" class="w-full text-xs text-amber-200/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-700 file:text-stone-950 hover:file:bg-amber-600 cursor-pointer">
+
+          <template x-if="mosaico[diaDetalheChave] && mosaico[diaDetalheChave].imagem">
+            <div class="relative mt-2 rounded-2xl overflow-hidden border border-amber-500/50 max-h-48">
+              <img :src="mosaico[diaDetalheChave].imagem" class="w-full object-cover">
+              <button @click="removerImagemDia()" class="absolute top-2 right-2 bg-rose-950/80 text-rose-300 p-1 rounded-full text-xs font-bold">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <!-- STATUS DO PROCESSO & SUGESTÃO DE POST -->
         <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
-          <div>
-            <label class="block font-bold text-amber-300 mb-1">Projeto / Foco Atual:</label>
-            <input type="text" x-model="bordoVivo.projeto" placeholder="Ex: Desenho do Widget do Canva / Estudo do ENEM" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
-          </div>
+          <span class="font-bold text-amber-300 block">🔨 Status do Foco / Projeto Atual:</span>
+          
+          <input type="text" x-model="bordoVivo.projeto" placeholder="Ex: Estudo do ENEM / Design do Studio Bárbara" class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100">
 
           <div>
             <label class="block font-bold text-amber-300 mb-1">Etapa Atual do Processo:</label>
             <div class="grid grid-cols-3 gap-2 text-center">
               <button @click="bordoVivo.etapa = 'Inicio'" :class="bordoVivo.etapa === 'Inicio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌱 Início (Inspirações)</button>
-              <button @click="bordoVivo.etapa = 'Meio'" :class="bordoVivo.etapa === 'Meio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🔨 Meio (Bastidores/Croquis)</button>
-              <button @click="bordoVivo.etapa = 'Fim'" :class="bordoVivo.etapa === 'Fim' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌸 Fim (Resultado/Erros)</button>
+              <button @click="bordoVivo.etapa = 'Meio'" :class="bordoVivo.etapa === 'Meio' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🔨 Meio (Bastidores)</button>
+              <button @click="bordoVivo.etapa = 'Fim'" :class="bordoVivo.etapa === 'Fim' ? 'bg-amber-600 text-stone-950 font-black' : 'bg-stone-900 text-amber-200'" class="py-2 rounded-xl border border-stone-800">🌸 Fim (Resultado)</button>
             </div>
           </div>
 
@@ -290,9 +438,9 @@
       </section>
     </template>
 
-    <!-- ABA 5: ESTEIRA FINAL & RODA DE REDES -->
+    <!-- ABA 5: ESTEIRA FINAL & PUBLICADOR (COM LISTA DE ITENS SALVOS) -->
     <template x-if="abaAtiva === 'esteira'">
-      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
         <div class="border-b border-amber-900/40 pb-2">
           <h2 class="text-sm font-bold text-amber-300 lotr-title">🚀 Esteira Final & Publicador</h2>
           <p class="text-[10px] text-amber-200/60 italic">Mapeie onde o arquivo está salvo e qual rede social receberá</p>
@@ -333,6 +481,122 @@
             🚀 Registrar Conteúdo na Esteira
           </button>
         </div>
+
+        <!-- LISTA DOS MATERIAIS NA ESTEIRA FINAL -->
+        <div class="space-y-3 max-h-[350px] overflow-y-auto text-xs">
+          <template x-for="(item, idx) in esteiraFinal" :key="item.id">
+            <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-2">
+              <div class="flex justify-between items-start border-b border-amber-900/30 pb-1.5">
+                <div>
+                  <h3 class="font-bold text-amber-300 text-sm" x-text="item.titulo"></h3>
+                  <span class="text-[10px] text-amber-200/50 block" x-text="'Onde está salvo: ' + item.ondeSalvo"></span>
+                </div>
+                <button @click="removerEsteira(idx)" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+              </div>
+
+              <div class="flex flex-wrap gap-2 text-[10px]">
+                <span class="bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800" x-text="item.estado"></span>
+                <span class="bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-800 font-bold" x-text="'Destino: ' + item.rede"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+    </template>
+
+    <!-- ABA 6: REGULAÇÃO, TERMÔMETRO & FILTRO "E DAÍ?" -->
+    <template x-if="abaAtiva === 'regulacao'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 no-print">
+        <div class="border-b border-amber-900/40 pb-2">
+          <h2 class="text-sm font-bold text-amber-300 lotr-title">🌡️ Regulação & Filtro "E Daí?"</h2>
+          <p class="text-[10px] text-amber-200/60 italic">Proteção para o seu cérebro e avaliação de qualidade</p>
+        </div>
+
+        <!-- TERMÔMETRO DE SOBRECARGA -->
+        <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-800/60 space-y-3 text-xs">
+          <span class="font-bold text-amber-300 block">🌡️ Termômetro de Sobrecarga vs. Desconforto Isolado</span>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" x-model="regulacao.repetitivo" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
+              <span class="text-amber-200">É um padrão repetitivo ou travamento recorrente?</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" x-model="regulacao.sofrimento" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
+              <span class="text-amber-200">Causa sofrimento real / exaustão cognitiva?</span>
+            </label>
+          </div>
+
+          <div class="p-3 rounded-xl border font-bold text-[11px]" :class="regulacao.sofrimento ? 'bg-rose-950/80 border-rose-700 text-rose-200' : 'bg-emerald-950/80 border-emerald-700 text-emerald-200'">
+            <span x-text="regulacao.sofrimento ? '⚠️ Sobrecarga Real: Respire fundo, recolha-se e estabeleça limites.' : '🌿 Apenas Desconforto Isolado: Respire fundo e siga em frente no processo.'"></span>
+          </div>
+        </div>
+
+        <!-- FILTRO E DAÍ -->
+        <div class="p-4 rounded-2xl bg-stone-950/90 border border-amber-800/60 space-y-2 text-xs">
+          <span class="font-bold text-amber-300 block">💡 Teste "E Daí?" (Filtro de Qualidade)</span>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="regulacao.edai_util" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
+            <span class="text-amber-200">Este conteúdo é realmente útil, interessante ou inspirador?</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="regulacao.edai_conforto" @change="saveState()" class="rounded bg-stone-900 border-amber-600 text-amber-600">
+            <span class="text-amber-200">Sinto-me confortável se minha mãe, amigos ou chefe virem isso?</span>
+          </label>
+        </div>
+      </section>
+    </template>
+
+    <!-- ABA 7: HISTÓRICO CONSOLIDADO & IMPRESSÃO -->
+    <template x-if="abaAtiva === 'historico'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40">
+        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2 no-print">
+          <div>
+            <h2 class="text-sm font-bold text-amber-300 lotr-title">📜 Histórico Geral de Registros</h2>
+            <p class="text-[10px] text-amber-200/60 italic">Consolidação completa do seu cérebro em 2026</p>
+          </div>
+          <button @click="imprimirHistorico()" class="px-3 py-1.5 bg-amber-600 text-stone-950 font-extrabold text-xs rounded-xl shadow">
+            🖨️ Imprimir Histórico
+          </button>
+        </div>
+
+        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1 text-xs">
+          <template x-for="reg in historicoOrdenado" :key="reg.data">
+            <div class="p-4 rounded-2xl bg-stone-950/80 border border-amber-900/40 space-y-2">
+              <div class="flex justify-between items-center border-b border-amber-900/30 pb-1">
+                <span class="font-bold text-amber-400 text-sm" x-text="reg.data"></span>
+                <div class="flex items-center gap-1">
+                  <template x-for="ico in reg.icones" :key="ico">
+                    <span class="text-xs" x-text="ico"></span>
+                  </template>
+                </div>
+              </div>
+
+              <template x-if="reg.observacaoCalendario">
+                <div class="p-2 bg-stone-900/90 rounded-lg text-amber-300">
+                  <strong>📝 Observação:</strong> <span x-text="reg.observacaoCalendario"></span>
+                </div>
+              </template>
+
+              <template x-if="reg.melhorCoisa">
+                <div class="p-2 bg-amber-950/40 rounded-lg text-amber-200">
+                  <strong>🌟 A melhor coisa do dia:</strong> <span x-text="reg.melhorCoisa"></span>
+                </div>
+              </template>
+
+              <template x-if="reg.acontecimentos">
+                <div class="p-2 bg-stone-900/60 rounded-lg text-amber-100/80">
+                  <strong>⛵ Bordo:</strong> <span x-text="reg.acontecimentos"></span>
+                </div>
+              </template>
+
+              <template x-if="reg.imagem">
+                <div class="rounded-xl overflow-hidden border border-amber-900/40 max-h-48 mt-1">
+                  <img :src="reg.imagem" class="w-full object-cover">
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
       </section>
     </template>
 
@@ -363,11 +627,19 @@
         capturas: [],
         conexoes: [],
         esteiraFinal: [],
+        combinacaoAtual: null,
 
         novaCaptura: { fonte: 'Pesquisas', tags: '', conteudo: '' },
+        tempImagemCaptura: null,
+
         queixa: { reclamacao: '', solucao: '' },
+        novoCruzamento: { texto: '' },
+        tempImagemCruzamento: null,
+
         bordoVivo: { projeto: '', etapa: 'Meio' },
         esteiraPublicar: { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' },
+
+        regulacao: { repetitivo: false, sofrimento: false, edai_util: false, edai_conforto: false },
 
         nomesMeses: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
 
@@ -410,6 +682,28 @@
           return lista;
         },
 
+        get historicoOrdenado() {
+          return Object.keys(this.mosaico)
+            .filter(k => this.mosaico[k] && ( (this.mosaico[k].tipos && this.mosaico[k].tipos.length > 0) || this.mosaico[k].observacaoCalendario || this.mosaico[k].melhorCoisa || this.mosaico[k].acontecimentos || this.mosaico[k].imagem ))
+            .sort().reverse()
+            .map(chave => {
+              const item = this.mosaico[chave];
+              const tipos = item.tipos || [];
+              const icones = tipos.map(tId => {
+                const leg = this.legendas.find(l => l.id === tId);
+                return leg ? leg.icon : '';
+              });
+              return {
+                data: chave,
+                icones: icones,
+                observacaoCalendario: item.observacaoCalendario || '',
+                melhorCoisa: item.melhorCoisa || '',
+                acontecimentos: item.acontecimentos || '',
+                imagem: item.imagem || null
+              };
+            });
+        },
+
         async initApp() {
           const cache = localStorage.getItem('laboratorio_criacao_backup');
           if (cache) {
@@ -419,6 +713,7 @@
               this.capturas = parsed.capturas || [];
               this.conexoes = parsed.conexoes || [];
               this.esteiraFinal = parsed.esteiraFinal || [];
+              this.regulacao = parsed.regulacao || this.regulacao;
               if (parsed.legendas) this.legendas = parsed.legendas;
             } catch(e) {}
           }
@@ -430,23 +725,24 @@
               if (data.capturas) this.capturas = data.capturas;
               if (data.conexoes) this.conexoes = data.conexoes;
               if (data.esteiraFinal) this.esteiraFinal = data.esteiraFinal;
+              if (data.regulacao) this.regulacao = data.regulacao;
               if (data.legendas) this.legendas = data.legendas;
             }
           });
 
           if (!this.mosaico[this.diaDetalheChave]) {
-            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '' };
+            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
           }
         },
 
         selecionarDiaParaEditar(chave) {
           this.diaDetalheChave = chave;
-          if (!this.mosaico[chave]) this.mosaico[chave] = { tipos: [], observacaoCalendario: '' };
+          if (!this.mosaico[chave]) this.mosaico[chave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
         },
 
         alternarLegendaNoDia(catId) {
           if (!this.mosaico[this.diaDetalheChave]) {
-            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '' };
+            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
           }
           let tipos = this.mosaico[this.diaDetalheChave].tipos || [];
           if (tipos.includes(catId)) {
@@ -466,18 +762,42 @@
           this.abaAtiva = 'captura';
         },
 
+        uploadImagemCaptura(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => { this.tempImagemCaptura = e.target.result; };
+          reader.readAsDataURL(file);
+        },
+
         salvarCaptura() {
-          if (!this.novaCaptura.conteudo) return alert('Insira um conteúdo para a captura.');
-          const tagsArr = this.novaCaptura.tags.split(',').map(t => t.trim()).filter(t => t);
+          if (!this.novaCaptura.conteudo && !this.tempImagemCaptura) return alert('Insira um conteúdo ou imagem para a captura.');
+          const tagsArr = this.novaCaptura.tags ? this.novaCaptura.tags.split(',').map(t => t.trim()).filter(t => t) : [];
           this.capturas.unshift({
             id: 'c_' + Date.now(),
             fonte: this.novaCaptura.fonte,
             conteudo: this.novaCaptura.conteudo,
+            imagem: this.tempImagemCaptura || null,
             tagsArray: tagsArr,
             data: new Date().toLocaleDateString('pt-BR')
           });
           this.novaCaptura = { fonte: 'Pesquisas', tags: '', conteudo: '' };
+          this.tempImagemCaptura = null;
           this.saveState();
+        },
+
+        removerCaptura(idx) {
+          if (confirm('Deseja excluir esta captura?')) {
+            this.capturas.splice(idx, 1);
+            this.saveState();
+          }
+        },
+
+        gerarCombinacaoAleatoria() {
+          const capturasValidas = this.capturas.length > 0 ? this.capturas : [{ conteudo: 'Conceito de Design Minimalista' }, { conteudo: 'Teoria da Regulação Emocional' }];
+          const randomA = capturasValidas[Math.floor(Math.random() * capturasValidas.length)].conteudo;
+          const randomB = capturasValidas[Math.floor(Math.random() * capturasValidas.length)].conteudo;
+          this.combinacaoAtual = { itemA: randomA, itemB: randomB };
         },
 
         salvarQueixaComoIdeia() {
@@ -494,12 +814,72 @@
           this.saveState();
         },
 
+        uploadImagemCruzamento(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => { this.tempImagemCruzamento = e.target.result; };
+          reader.readAsDataURL(file);
+        },
+
+        salvarCruzamento() {
+          if (!this.novoCruzamento.texto && !this.tempImagemCruzamento) return alert('Escreva sobre a conexão ou suba uma imagem.');
+          this.conexoes.unshift({
+            id: 'cx_' + Date.now(),
+            texto: this.novoCruzamento.texto,
+            imagem: this.tempImagemCruzamento || null,
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+          this.novoCruzamento = { texto: '' };
+          this.tempImagemCruzamento = null;
+          this.saveState();
+        },
+
+        removerConexao(idx) {
+          if (confirm('Deseja excluir esta conexão?')) {
+            this.conexoes.splice(idx, 1);
+            this.saveState();
+          }
+        },
+
+        uploadImagemDia(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (!this.mosaico[this.diaDetalheChave]) {
+              this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '', melhorCoisa: '', acontecimentos: '', imagem: null };
+            }
+            this.mosaico[this.diaDetalheChave].imagem = e.target.result;
+            this.saveState();
+          };
+          reader.readAsDataURL(file);
+        },
+
+        removerImagemDia() {
+          if (this.mosaico[this.diaDetalheChave]) {
+            this.mosaico[this.diaDetalheChave].imagem = null;
+            this.saveState();
+          }
+        },
+
         salvarNaEsteiraFinal() {
           if (!this.esteiraPublicar.titulo) return alert('Insira o título do conteúdo.');
           this.esteiraFinal.unshift({ ...this.esteiraPublicar, id: 'e_' + Date.now() });
           this.esteiraPublicar = { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' };
           this.saveState();
           alert('🚀 Registrado na esteira final com sucesso!');
+        },
+
+        removerEsteira(idx) {
+          if (confirm('Deseja remover este item da esteira?')) {
+            this.esteiraFinal.splice(idx, 1);
+            this.saveState();
+          }
+        },
+
+        imprimirHistorico() {
+          window.print();
         },
 
         temCor(chave) { return this.mosaico[chave] && this.mosaico[chave].tipos && this.mosaico[chave].tipos.length > 0; },
@@ -529,7 +909,7 @@
 
         salvarLocal() {
           localStorage.setItem('laboratorio_criacao_backup', JSON.stringify({
-            mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, legendas: this.legendas
+            mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, regulacao: this.regulacao, legendas: this.legendas
           }));
         },
 
@@ -538,7 +918,7 @@
           this.salvarLocal();
           try {
             await db.collection("modo_casa").doc("laboratorio_criacao").set({
-              mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, legendas: this.legendas,
+              mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, regulacao: this.regulacao, legendas: this.legendas,
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
             this.salvando = false;
