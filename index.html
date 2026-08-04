@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌱 Laboratório de Criação — Rivendell OS</title>
   
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Alpine.js CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+  <!-- Fontes Épicas da Terra Média -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;800&family=MedievalSharp&display=swap" rel="stylesheet">
@@ -40,12 +45,14 @@
 
   <div class="max-w-3xl mx-auto space-y-4">
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO DO HUB CRIATIVO -->
     <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 text-center space-y-2">
       <div class="flex justify-between items-center text-[10px] lotr-sub font-bold">
         <span class="text-emerald-400">Ateliê Criativo • Laboratório de Sistemas</span>
-        <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Sync...</span>
-        <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
+        <div class="flex items-center gap-2">
+          <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Sync...</span>
+          <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
+        </div>
       </div>
 
       <h1 class="text-xl sm:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md">
@@ -53,7 +60,7 @@
       </h1>
       <p class="text-xs text-amber-200/70 italic">"Reclame criando algo melhor. Transforme bastidores em estoque."</p>
 
-      <!-- BARRA DE ABAS REESTRUTURADA -->
+      <!-- BARRA DE ABAS DO SISTEMA -->
       <nav class="mt-3 bg-stone-950/90 p-1 rounded-2xl border border-amber-900/40 grid grid-cols-5 gap-1 text-[9px] sm:text-[10px] font-bold lotr-sub">
         <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70'" class="py-2 rounded-xl">
           🧩 Mosaico
@@ -73,13 +80,50 @@
       </nav>
     </header>
 
-    <!-- ABA 1: MOSAICO + BOTÃO ENVIAR PARA CAPTURA -->
+    <!-- ABA 1: MOSAICO + LEGENDAS DE REGA COLORIDAS + OBSERVAÇÃO -->
     <template x-if="abaAtiva === 'mosaico'">
       <div class="space-y-4">
+
+        <!-- 🎨 LEGENDAS DA CRIATIVIDADE (VOLTARAM!) -->
+        <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
+          <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas de Rega (Multi-Seleção)</span>
+            <button @click="modoEdicaoLegenda = !modoEdicaoLegenda" class="text-[10px] text-amber-300 hover:underline">
+              <span x-text="modoEdicaoLegenda ? 'Concluir Edição' : '✏️ Editar Legendas'"></span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+            <template x-for="(cat, idx) in legendas" :key="cat.id">
+              <div 
+                @click="!modoEdicaoLegenda && alternarLegendaNoDia(cat.id)"
+                :class="[
+                  cat.bg,
+                  diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id) ? 'ring-2 ring-amber-300 font-black scale-105 shadow-lg' : 'opacity-70'
+                ]"
+                class="p-2.5 rounded-2xl border border-stone-800 cursor-pointer transition-all flex items-center justify-between text-stone-950 font-bold">
+                
+                <div class="flex items-center gap-2 truncate">
+                  <span class="text-base" x-text="cat.icon"></span>
+                  <template x-if="!modoEdicaoLegenda">
+                    <span class="truncate text-[11px]" x-text="cat.nome"></span>
+                  </template>
+                  <template x-if="modoEdicaoLegenda">
+                    <input type="text" x-model="cat.nome" @input="saveState()" class="w-full bg-stone-900/90 text-amber-100 text-[10px] p-1 rounded border border-amber-600/40 focus:outline-none">
+                  </template>
+                </div>
+
+                <span x-show="diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id)" class="text-xs font-black">✓</span>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <!-- MOSAICO DO MÊS 2026 -->
         <section class="glass-card rounded-3xl p-5 space-y-4 border border-emerald-500/40">
           <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-            <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico do Cérebro 2026</span>
-            <span class="text-[10px] text-amber-200/60 italic" x-text="diaDetalheChave ? 'Dia: ' + diaDetalheChave : 'Selecione um dia'"></span>
+            <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico do Cérebro (2026)</span>
+            <span class="text-[10px] text-amber-200/60 italic" x-text="diaDetalheChave ? 'Selecionado: ' + diaDetalheChave : 'Toque num dia para pintar'"></span>
           </div>
 
           <!-- SELETOR DO MÊS -->
@@ -89,19 +133,34 @@
             <button @click="mesAtualIndex = (mesAtualIndex < 11 ? mesAtualIndex + 1 : 0)" class="text-amber-400 p-1">▶</button>
           </div>
 
-          <!-- GRADE -->
+          <!-- GRADE DOS DIAS -->
           <div class="grid grid-cols-7 gap-2 text-center text-xs">
+            <span class="text-[10px] text-stone-500 font-bold">Dom</span>
+            <span class="text-[10px] text-stone-500 font-bold">Seg</span>
+            <span class="text-[10px] text-stone-500 font-bold">Ter</span>
+            <span class="text-[10px] text-stone-500 font-bold">Qua</span>
+            <span class="text-[10px] text-stone-500 font-bold">Qui</span>
+            <span class="text-[10px] text-stone-500 font-bold">Sex</span>
+            <span class="text-[10px] text-stone-500 font-bold">Sáb</span>
+
             <template x-for="dia in diasDoMes" :key="dia.chave">
               <div 
                 @click="dia.valido && selecionarDiaParaEditar(dia.chave)"
                 :style="obterEstiloGradienteDia(dia.chave)"
                 :class="[
-                  dia.valido ? 'cursor-pointer hover:scale-110' : 'opacity-10 cursor-default',
-                  diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105' : '',
-                  !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black'
+                  dia.valido ? 'cursor-pointer hover:scale-110 active:scale-95' : 'opacity-10 cursor-default',
+                  diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105 z-10' : '',
+                  !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800/80 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black shadow-md'
                 ]"
-                class="h-11 rounded-xl border flex flex-col items-center justify-center relative overflow-hidden">
-                <span class="text-[11px] font-bold z-10" x-text="dia.numero"></span>
+                class="h-11 rounded-xl border flex flex-col items-center justify-center transition-all relative overflow-hidden">
+                
+                <span class="text-[11px] font-bold z-10" :class="temCor(dia.chave) ? 'text-stone-950 drop-shadow-sm font-black' : 'text-amber-200/70'" x-text="dia.numero"></span>
+                
+                <div class="flex items-center justify-center gap-0.5 z-10 max-w-full overflow-hidden">
+                  <template x-for="ico in obterIconesDia(dia.chave)" :key="ico">
+                    <span class="text-[8px]" x-text="ico"></span>
+                  </template>
+                </div>
               </div>
             </template>
           </div>
@@ -110,16 +169,17 @@
           <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
             <div class="flex justify-between items-center">
               <span class="font-bold text-amber-300" x-text="'📝 Nota do Dia • ' + diaDetalheChave"></span>
-              <button @click="diaDetalheChave = null" class="text-amber-400">✕</button>
+              <button @click="diaDetalheChave = null" class="text-amber-400 font-bold">✕</button>
             </div>
             
             <textarea x-model="mosaico[diaDetalheChave].observacaoCalendario" @input="saveState()" rows="2" placeholder="Anote a ideia rápida ou ocorrência..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
 
-            <button @click="enviarObsParaCaptura()" class="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
+            <button @click="enviarObsParaCaptura()" class="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-stone-950 font-black rounded-xl uppercase text-[10px]">
               🎯 Transformar Observação em Captura das 25 Fontes
             </button>
           </div>
         </section>
+
       </div>
     </template>
 
@@ -131,7 +191,6 @@
           <p class="text-[10px] text-amber-200/60 italic">Catalogado com tags de assunto para cruzamentos futuros</p>
         </div>
 
-        <!-- FORMULÁRIO DE CAPTURA COM TAGS -->
         <div class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-3 text-xs">
           <span class="font-bold text-amber-300 block">➕ Nova Captura / Roubo Criativo:</span>
           
@@ -151,7 +210,6 @@
           </button>
         </div>
 
-        <!-- LISTA DE CAPTURAS -->
         <div class="space-y-3 max-h-[400px] overflow-y-auto text-xs">
           <template x-for="(cap, idx) in capturas" :key="cap.id">
             <div class="p-3.5 bg-stone-950/80 rounded-2xl border border-amber-900/40 space-y-1.5">
@@ -179,7 +237,6 @@
           <p class="text-[10px] text-amber-200/60 italic">Junte tags, escreva hipóteses e transforme queixas em sistemas melhores</p>
         </div>
 
-        <!-- RECLAMAÇÃO -> SOFTWARE MELHOR -->
         <div class="p-4 bg-rose-950/30 border border-rose-800/50 rounded-2xl space-y-2 text-xs">
           <span class="font-bold text-rose-300 block">💡 Transformador de Reclamações (Modo Gertrudes $\rightarrow$ Solução)</span>
           <p class="text-[10px] text-amber-200/60 italic">"A melhor maneira de reclamar de um software é criando um software melhor."</p>
@@ -190,20 +247,6 @@
           <button @click="salvarQueixaComoIdeia()" class="w-full py-2 bg-rose-700 hover:bg-rose-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
             ⚡ Transformar Reclamação em Ideia de Projeto/Post
           </button>
-        </div>
-
-        <!-- PAINEL LIVRE DE CRUZAMENTO -->
-        <div class="p-4 bg-stone-950/90 border border-amber-800/60 rounded-2xl space-y-3 text-xs">
-          <span class="font-bold text-amber-300 block">🎨 Painel de Escrita & Imagem de Conexão:</span>
-          
-          <textarea x-model="novoCruzamento.texto" rows="3" placeholder="Escreva sobre a fusão das tags e ideias..." class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
-
-          <div class="flex justify-between items-center">
-            <input type="file" accept="image/*" @change="uploadImagemCruzamento($event)" class="text-[10px] text-amber-200/70">
-            <button @click="salvarCruzamento()" class="px-4 py-2 bg-amber-600 text-stone-950 font-bold rounded-xl uppercase text-[10px]">
-              Guardar Conexão
-            </button>
-          </div>
         </div>
       </section>
     </template>
@@ -231,7 +274,6 @@
             </div>
           </div>
 
-          <!-- SUGESTÃO AUTOMÁTICA DE IDEIA DE POST -->
           <div class="p-3 bg-amber-950/50 rounded-xl border border-amber-700/50 text-amber-200 text-[11px] space-y-1">
             <span class="font-bold text-amber-300 block">💡 Sugestão de Conteúdo para esta Etapa:</span>
             <template x-if="bordoVivo.etapa === 'Inicio'">
@@ -315,6 +357,7 @@
         salvando: false,
         abaAtiva: 'mosaico',
         mesAtualIndex: new Date().getMonth(),
+        modoEdicaoLegenda: false,
         diaDetalheChave: new Date().toISOString().split('T')[0],
         mosaico: {},
         capturas: [],
@@ -323,7 +366,6 @@
 
         novaCaptura: { fonte: 'Pesquisas', tags: '', conteudo: '' },
         queixa: { reclamacao: '', solucao: '' },
-        novoCruzamento: { texto: '', imagem: null },
         bordoVivo: { projeto: '', etapa: 'Meio' },
         esteiraPublicar: { titulo: '', ondeSalvo: '', estado: 'Rascunho Solto', rede: 'Instagram Studio Feed' },
 
@@ -346,12 +388,12 @@
         ],
 
         legendas: [
-          { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', hex: '#34d399' },
-          { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', hex: '#38bdf8' },
-          { id: 'ideia', nome: 'Tive uma Ideia', icon: '🟨', hex: '#fde047' },
-          { id: 'desenhei', nome: 'Desenhei / Design', icon: '🟪', hex: '#c084fc' },
-          { id: 'incubacao', nome: 'Incubei o Projeto', icon: '🟥', hex: '#fb7185' },
-          { id: 'descanso', nome: 'Descansei', icon: '⬜', hex: '#d6d3d1' }
+          { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', hex: '#34d399', bg: 'bg-emerald-400 border-emerald-300' },
+          { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', hex: '#38bdf8', bg: 'bg-sky-400 border-sky-300' },
+          { id: 'ideia', nome: 'Tive uma Ideia', icon: '🟨', hex: '#fde047', bg: 'bg-amber-300 border-yellow-200' },
+          { id: 'desenhei', nome: 'Desenhei / Design', icon: '🟪', hex: '#c084fc', bg: 'bg-purple-400 border-purple-300' },
+          { id: 'incubacao', nome: 'Incubei o Projeto', icon: '🟥', hex: '#fb7185', bg: 'bg-rose-400 border-rose-300' },
+          { id: 'descanso', nome: 'Descansei de Propósito', icon: '⬜', hex: '#d6d3d1', bg: 'bg-stone-300 border-stone-100' }
         ],
 
         get diasDoMes() {
@@ -377,6 +419,7 @@
               this.capturas = parsed.capturas || [];
               this.conexoes = parsed.conexoes || [];
               this.esteiraFinal = parsed.esteiraFinal || [];
+              if (parsed.legendas) this.legendas = parsed.legendas;
             } catch(e) {}
           }
 
@@ -387,6 +430,7 @@
               if (data.capturas) this.capturas = data.capturas;
               if (data.conexoes) this.conexoes = data.conexoes;
               if (data.esteiraFinal) this.esteiraFinal = data.esteiraFinal;
+              if (data.legendas) this.legendas = data.legendas;
             }
           });
 
@@ -398,6 +442,20 @@
         selecionarDiaParaEditar(chave) {
           this.diaDetalheChave = chave;
           if (!this.mosaico[chave]) this.mosaico[chave] = { tipos: [], observacaoCalendario: '' };
+        },
+
+        alternarLegendaNoDia(catId) {
+          if (!this.mosaico[this.diaDetalheChave]) {
+            this.mosaico[this.diaDetalheChave] = { tipos: [], observacaoCalendario: '' };
+          }
+          let tipos = this.mosaico[this.diaDetalheChave].tipos || [];
+          if (tipos.includes(catId)) {
+            tipos = tipos.filter(t => t !== catId);
+          } else {
+            tipos.push(catId);
+          }
+          this.mosaico[this.diaDetalheChave].tipos = tipos;
+          this.saveState();
         },
 
         enviarObsParaCaptura() {
@@ -460,9 +518,18 @@
           return `background: linear-gradient(to bottom, ${stops.join(', ')});`;
         },
 
+        obterIconesDia(chave) {
+          if (!this.temCor(chave)) return [];
+          const tipos = this.mosaico[chave].tipos;
+          return tipos.map(tId => {
+            const leg = this.legendas.find(l => l.id === tId);
+            return leg ? leg.icon : '';
+          });
+        },
+
         salvarLocal() {
           localStorage.setItem('laboratorio_criacao_backup', JSON.stringify({
-            mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal
+            mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, legendas: this.legendas
           }));
         },
 
@@ -471,7 +538,7 @@
           this.salvarLocal();
           try {
             await db.collection("modo_casa").doc("laboratorio_criacao").set({
-              mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal,
+              mosaico: this.mosaico, capturas: this.capturas, conexoes: this.conexoes, esteiraFinal: this.esteiraFinal, legendas: this.legendas,
               updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
             this.salvando = false;
