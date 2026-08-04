@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌱 Jardim Criativo — O Mosaico Multi-Cores de Rivendell</title>
+  <title>🌱 Jardim Criativo — Mosaico, Histórico & Impressão (Rivendell OS)</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
   <!-- Alpine.js CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Firebase Compat -->
+  <!-- Firebase Compat (SDK Leve para Notion) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -30,135 +30,205 @@
     .lotr-title { font-family: 'Cinzel Decorative', serif; }
     .lotr-sub { font-family: 'Cinzel', serif; }
     .glass-card {
-      background: rgba(16, 24, 18, 0.92);
+      background: rgba(16, 24, 18, 0.94);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(212, 175, 55, 0.3);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
     }
+    @media print {
+      body { background: #fff !important; color: #000 !important; font-family: sans-serif !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .glass-card { background: none !important; border: none !important; box-shadow: none !important; }
+    }
   </style>
 </head>
-<body class="p-3 sm:p-6" x-data="jardimCriativoApp()" x-init="initApp()">
+<body class="p-2 sm:p-5" x-data="jardimCriativoApp()" x-init="initApp()">
 
   <div class="max-w-xl mx-auto space-y-4">
 
     <!-- CABEÇALHO DO JARDIM CRIATIVO -->
-    <header class="glass-card rounded-3xl p-5 border border-amber-600/40 relative overflow-hidden text-center space-y-2">
+    <header class="glass-card rounded-3xl p-4 sm:p-5 border border-amber-600/40 relative overflow-hidden text-center space-y-2 no-print">
       <div class="flex justify-between items-center text-[10px] lotr-sub font-bold">
-        <span class="text-emerald-400">Ateliê Criativo • Mosaico Dividido 2026</span>
-        <span x-show="salvando" class="text-amber-400 animate-pulse">Sync...</span>
-        <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
+        <span class="text-emerald-400">Ateliê Criativo • Mosaico 2026</span>
+        <div class="flex items-center gap-2">
+          <span x-show="salvando" class="text-amber-400 animate-pulse">🖋️ Gravando...</span>
+          <span x-show="!salvando" class="text-emerald-400">🟢 Notion Sync</span>
+        </div>
       </div>
 
       <h1 class="text-xl md:text-2xl lotr-title font-bold text-amber-400 drop-shadow-md flex items-center justify-center gap-2">
         🌱 Jardim Criativo
       </h1>
-      <p class="text-xs text-amber-200/70 italic">"Combine várias legendas no mesmo dia para ver o mosaico dividir suas cores!"</p>
+      <p class="text-xs text-amber-200/70 italic">"Você não se cobra por obras-primas. Registra a continuidade do seu cérebro."</p>
 
-      <!-- PAINEL DE LEGENDA RÁPIDA -->
-      <div class="pt-2 border-t border-amber-900/40 flex justify-around text-[10px] font-bold">
-        <span class="text-amber-300">Dias Regados: <strong x-text="totalDiasRegados" class="text-emerald-400"></strong></span>
-        <span class="text-amber-300">Ano: <strong>2026</strong></span>
-      </div>
+      <!-- NAVEGAÇÃO DE ABAS DENTRO DA INTERFACE DO WIDGET -->
+      <nav class="mt-3 bg-stone-950/80 p-1.5 rounded-2xl border border-amber-900/40 grid grid-cols-2 gap-1 text-[11px] font-bold lotr-sub">
+        <button @click="abaAtiva = 'mosaico'" :class="abaAtiva === 'mosaico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          🧩 Mosaico Visual
+        </button>
+        <button @click="abaAtiva = 'historico'" :class="abaAtiva === 'historico' ? 'bg-amber-600 text-stone-950 font-extrabold shadow' : 'text-amber-200/70 hover:text-amber-100'" class="py-2 rounded-xl transition">
+          📜 Histórico & Impressão (<span x-text="totalDiasRegados"></span>)
+        </button>
+      </nav>
     </header>
 
-    <!-- LEGENDAS DA CRIATIVIDADE (EDITÁVEIS E COM SELEÇÃO MÚLTIPLA) -->
-    <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
-      <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas & Tipos de Rega</span>
-        <button @click="modoEdicaoLegenda = !modoEdicaoLegenda" class="text-[10px] text-amber-300 hover:underline">
-          <span x-text="modoEdicaoLegenda ? 'Concluir Edição' : '✏️ Editar Legendas'"></span>
-        </button>
-      </div>
-
-      <!-- LISTA DE CATEGORIAS DE REGA -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-        <template x-for="(cat, idx) in legendas" :key="cat.id">
-          <div 
-            @click="!modoEdicaoLegenda && alternarLegendaNoDia(cat.id)"
-            :class="[
-              cat.bg,
-              diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id) ? 'ring-2 ring-amber-300 font-black scale-105 shadow-lg' : 'opacity-70'
-            ]"
-            class="p-2.5 rounded-2xl border border-stone-800 cursor-pointer transition-all flex items-center justify-between text-stone-950 font-bold">
-            
-            <div class="flex items-center gap-2 truncate">
-              <span class="text-base" x-text="cat.icon"></span>
-              <template x-if="!modoEdicaoLegenda">
-                <span class="truncate text-[11px]" x-text="cat.nome"></span>
-              </template>
-              <template x-if="modoEdicaoLegenda">
-                <input type="text" x-model="cat.nome" @input="saveState()" class="w-full bg-stone-900/90 text-amber-100 text-[10px] p-1 rounded border border-amber-600/40 focus:outline-none">
-              </template>
-            </div>
-
-            <span x-show="diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id)" class="text-xs font-black">✓</span>
-          </div>
-        </template>
-      </div>
-    </section>
-
-    <!-- O MAPA / MOSAICO DO ANO (MATRIZ VISUAL DE REGISTRO) -->
-    <section class="glass-card rounded-3xl p-5 space-y-4 border border-emerald-500/40">
-      <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
-        <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico Visual de 2026</span>
-        <span class="text-[10px] text-amber-200/60 italic">Selecione o dia e alterne as cores acima</span>
-      </div>
-
-      <!-- SELETOR DO MÊS -->
-      <div class="flex items-center justify-between text-xs font-bold lotr-sub bg-stone-950/80 p-2 rounded-2xl border border-amber-900/40">
-        <button @click="mesAtualIndex = (mesAtualIndex > 0 ? mesAtualIndex - 1 : 11)" class="text-amber-400 p-1">◀</button>
-        <span class="text-amber-300 font-extrabold text-sm" x-text="nomesMeses[mesAtualIndex] + ' 2026'"></span>
-        <button @click="mesAtualIndex = (mesAtualIndex < 11 ? mesAtualIndex + 1 : 0)" class="text-amber-400 p-1">▶</button>
-      </div>
-
-      <!-- GRADE DOS DIAS DO MÊS -->
-      <div class="grid grid-cols-7 gap-2 text-center text-xs">
-        <span class="text-[10px] text-stone-500 font-bold">Dom</span>
-        <span class="text-[10px] text-stone-500 font-bold">Seg</span>
-        <span class="text-[10px] text-stone-500 font-bold">Ter</span>
-        <span class="text-[10px] text-stone-500 font-bold">Qua</span>
-        <span class="text-[10px] text-stone-500 font-bold">Qui</span>
-        <span class="text-[10px] text-stone-500 font-bold">Sex</span>
-        <span class="text-[10px] text-stone-500 font-bold">Sáb</span>
-
-        <template x-for="dia in diasDoMes" :key="dia.chave">
-          <div 
-            @click="dia.valido && selecionarDiaParaEditar(dia.chave)"
-            :style="obterEstiloGradienteDia(dia.chave)"
-            :class="[
-              dia.valido ? 'cursor-pointer hover:scale-110 active:scale-95' : 'opacity-10 cursor-default',
-              diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105 z-10' : '',
-              !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800/80 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black shadow-md'
-            ]"
-            class="h-11 rounded-xl border flex flex-col items-center justify-center transition-all relative overflow-hidden">
-            
-            <span class="text-[11px] font-bold z-10" :class="temCor(dia.chave) ? 'text-stone-950 drop-shadow-sm font-black' : 'text-amber-200/70'" x-text="dia.numero"></span>
-            
-            <!-- EMOJIS COMPACTOS -->
-            <div class="flex items-center justify-center gap-0.5 z-10 max-w-full overflow-hidden">
-              <template x-for="ico in obterIconesDia(dia.chave)" :key="ico">
-                <span class="text-[8px]" x-text="ico"></span>
-              </template>
-            </div>
-          </div>
-        </template>
-      </div>
-
-      <!-- CAMPO DE NOTA DE LEGENDA DO DIA SELECIONADO -->
-      <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-2 text-xs">
-        <div class="flex justify-between items-center">
-          <span class="font-bold text-amber-300" x-text="'📝 Nota do Dia • ' + diaDetalheChave"></span>
-          <button @click="diaDetalheChave = null" class="text-amber-400 font-bold">✕</button>
-        </div>
+    <!-- ABA 1: MOSAICO VISUAL E REGISTRO -->
+    <template x-if="abaAtiva === 'mosaico'">
+      <div class="space-y-4 no-print">
         
-        <textarea 
-          x-model="mosaico[diaDetalheChave].nota" 
-          @input="saveState()" 
-          rows="2" 
-          placeholder="Anote detalhes da criação ou inspiração deste dia..." 
-          class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+        <!-- LEGENDAS DA CRIATIVIDADE (COM SELEÇÃO MÚLTIPLA) -->
+        <section class="glass-card rounded-3xl p-4 space-y-3 border border-amber-500/40">
+          <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider lotr-sub">🎨 Legendas (Toque para Ativar/Desativar no Dia)</span>
+            <button @click="modoEdicaoLegenda = !modoEdicaoLegenda" class="text-[10px] text-amber-300 hover:underline">
+              <span x-text="modoEdicaoLegenda ? 'Concluir Edição' : '✏️ Editar Legendas'"></span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+            <template x-for="(cat, idx) in legendas" :key="cat.id">
+              <div 
+                @click="!modoEdicaoLegenda && alternarLegendaNoDia(cat.id)"
+                :class="[
+                  cat.bg,
+                  diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id) ? 'ring-2 ring-amber-300 font-black scale-105 shadow-lg' : 'opacity-70'
+                ]"
+                class="p-2.5 rounded-2xl border border-stone-800 cursor-pointer transition-all flex items-center justify-between text-stone-950 font-bold">
+                
+                <div class="flex items-center gap-2 truncate">
+                  <span class="text-base" x-text="cat.icon"></span>
+                  <template x-if="!modoEdicaoLegenda">
+                    <span class="truncate text-[11px]" x-text="cat.nome"></span>
+                  </template>
+                  <template x-if="modoEdicaoLegenda">
+                    <input type="text" x-model="cat.nome" @input="saveState()" class="w-full bg-stone-900/90 text-amber-100 text-[10px] p-1 rounded border border-amber-600/40 focus:outline-none">
+                  </template>
+                </div>
+
+                <span x-show="diaDetalheChave && mosaico[diaDetalheChave] && mosaico[diaDetalheChave].tipos.includes(cat.id)" class="text-xs font-black">✓</span>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <!-- MOSAICO DO MÊS -->
+        <section class="glass-card rounded-3xl p-5 space-y-4 border border-emerald-500/40">
+          <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+            <span class="text-xs font-bold text-amber-300 lotr-title">🧩 Mosaico Visual de 2026</span>
+            <span class="text-[10px] text-amber-200/60 italic" x-text="diaDetalheChave ? 'Editando: ' + diaDetalheChave : 'Toque em um dia para marcar'"></span>
+          </div>
+
+          <!-- SELETOR DO MÊS -->
+          <div class="flex items-center justify-between text-xs font-bold lotr-sub bg-stone-950/80 p-2 rounded-2xl border border-amber-900/40">
+            <button @click="mesAtualIndex = (mesAtualIndex > 0 ? mesAtualIndex - 1 : 11)" class="text-amber-400 p-1">◀</button>
+            <span class="text-amber-300 font-extrabold text-sm" x-text="nomesMeses[mesAtualIndex] + ' 2026'"></span>
+            <button @click="mesAtualIndex = (mesAtualIndex < 11 ? mesAtualIndex + 1 : 0)" class="text-amber-400 p-1">▶</button>
+          </div>
+
+          <!-- GRADE DOS DIAS DO MÊS -->
+          <div class="grid grid-cols-7 gap-2 text-center text-xs">
+            <span class="text-[10px] text-stone-500 font-bold">Dom</span>
+            <span class="text-[10px] text-stone-500 font-bold">Seg</span>
+            <span class="text-[10px] text-stone-500 font-bold">Ter</span>
+            <span class="text-[10px] text-stone-500 font-bold">Qua</span>
+            <span class="text-[10px] text-stone-500 font-bold">Qui</span>
+            <span class="text-[10px] text-stone-500 font-bold">Sex</span>
+            <span class="text-[10px] text-stone-500 font-bold">Sáb</span>
+
+            <template x-for="dia in diasDoMes" :key="dia.chave">
+              <div 
+                @click="dia.valido && selecionarDiaParaEditar(dia.chave)"
+                :style="obterEstiloGradienteDia(dia.chave)"
+                :class="[
+                  dia.valido ? 'cursor-pointer hover:scale-110 active:scale-95' : 'opacity-10 cursor-default',
+                  diaDetalheChave === dia.chave ? 'ring-2 ring-amber-300 scale-105 z-10' : '',
+                  !temCor(dia.chave) ? 'bg-stone-950/80 border-stone-800/80 text-amber-200/50' : 'border-amber-400/60 text-stone-950 font-black shadow-md'
+                ]"
+                class="h-11 rounded-xl border flex flex-col items-center justify-center transition-all relative overflow-hidden">
+                
+                <span class="text-[11px] font-bold z-10" :class="temCor(dia.chave) ? 'text-stone-950 drop-shadow-sm font-black' : 'text-amber-200/70'" x-text="dia.numero"></span>
+                
+                <div class="flex items-center justify-center gap-0.5 z-10 max-w-full overflow-hidden">
+                  <template x-for="ico in obterIconesDia(dia.chave)" :key="ico">
+                    <span class="text-[8px]" x-text="ico"></span>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- ANOTAÇÃO DO DIA SELECIONADO -->
+          <div x-show="diaDetalheChave" class="p-4 bg-stone-950/90 rounded-2xl border border-amber-800/60 space-y-2 text-xs">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-amber-300" x-text="'📝 Diário de Criação • ' + diaDetalheChave"></span>
+              <button @click="diaDetalheChave = null" class="text-amber-400 font-bold">✕</button>
+            </div>
+            
+            <textarea 
+              x-model="mosaico[diaDetalheChave].nota" 
+              @input="saveState()" 
+              rows="2" 
+              placeholder="Ex: Tive uma ideia incrível para o Studio Bárbara e desenhei o primeiro rascunho..." 
+              class="w-full p-2.5 bg-stone-900 border border-stone-800 rounded-xl text-amber-100 focus:outline-none"></textarea>
+            
+            <button @click="saveState()" class="w-full py-2 bg-gradient-to-r from-amber-600 to-yellow-600 text-stone-950 font-bold rounded-xl uppercase tracking-wider text-[11px]">
+              💾 Salvar Registro do Dia
+            </button>
+          </div>
+        </section>
+
       </div>
-    </section>
+    </template>
+
+    <!-- ABA 2: HISTÓRICO COMPLETO & BOTÃO IMPRIMIR -->
+    <template x-if="abaAtiva === 'historico'">
+      <section class="glass-card rounded-3xl p-5 space-y-4 border border-amber-500/40 animate-fade-in">
+        <div class="flex justify-between items-center border-b border-amber-900/40 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-amber-300 lotr-title">📜 Histórico de Registros de 2026</h2>
+            <p class="text-[10px] text-amber-200/60 italic">Todas as suas marcas de rega e notas salvas</p>
+          </div>
+
+          <button @click="imprimirHistorico()" class="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-yellow-600 text-stone-950 font-black text-xs rounded-xl shadow border border-yellow-300/40 lotr-sub flex items-center gap-1">
+            <span>🖨️</span> Imprimir Histórico
+          </button>
+        </div>
+
+        <!-- LISTA DE HISTÓRICO -->
+        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-1 text-xs">
+          <template x-for="reg in historicoOrdenado" :key="reg.data">
+            <div class="p-3.5 rounded-2xl bg-stone-950/80 border border-amber-900/40 space-y-2">
+              <div class="flex justify-between items-center border-b border-amber-900/20 pb-1.5">
+                <span class="font-bold text-amber-400" x-text="reg.data"></span>
+                <div class="flex items-center gap-1">
+                  <template x-for="ico in reg.icones" :key="ico">
+                    <span class="text-xs" x-text="ico"></span>
+                  </template>
+                </div>
+              </div>
+
+              <!-- TAGS COM NOME DAS LEGENDAS -->
+              <div class="flex flex-wrap gap-1">
+                <template x-for="nome in reg.nomesLegendas" :key="nome">
+                  <span class="text-[9px] bg-amber-950/80 text-amber-300 border border-amber-700/60 px-2 py-0.5 rounded-full" x-text="nome"></span>
+                </template>
+              </div>
+
+              <template x-if="reg.nota">
+                <p class="text-[11px] text-amber-100/90 bg-stone-900/60 p-2 rounded-xl border border-stone-800 italic" x-text="reg.nota"></p>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="historicoOrdenado.length === 0">
+            <div class="text-center py-6 text-stone-500 text-xs italic">
+              Nenhum registro no mosaico ainda. Selecione os dias na aba "Mosaico Visual" para começar!
+            </div>
+          </template>
+        </div>
+      </section>
+    </template>
 
   </div>
 
@@ -180,6 +250,7 @@
     function jardimCriativoApp() {
       return {
         salvando: false,
+        abaAtiva: 'mosaico',
         mesAtualIndex: new Date().getMonth(),
         modoEdicaoLegenda: false,
         diaDetalheChave: null,
@@ -187,7 +258,6 @@
 
         nomesMeses: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
 
-        // LEGENDAS COM CORES HEXADECIMAIS PARA DIVISÃO DO GRADIENTE
         legendas: [
           { id: 'escrevi', nome: 'Escrevi / Texto', icon: '🟩', hex: '#34d399', bg: 'bg-emerald-400 border-emerald-300' },
           { id: 'li', nome: 'Li / Pesquisei', icon: '🟦', hex: '#38bdf8', bg: 'bg-sky-400 border-sky-300' },
@@ -219,6 +289,29 @@
           return lista;
         },
 
+        get historicoOrdenado() {
+          return Object.keys(this.mosaico)
+            .filter(k => this.mosaico[k] && this.mosaico[k].tipos && this.mosaico[k].tipos.length > 0)
+            .sort().reverse()
+            .map(chave => {
+              const item = this.mosaico[chave];
+              const icones = item.tipos.map(tId => {
+                const leg = this.legendas.find(l => l.id === tId);
+                return leg ? leg.icon : '';
+              });
+              const nomesLegendas = item.tipos.map(tId => {
+                const leg = this.legendas.find(l => l.id === tId);
+                return leg ? leg.nome : tId;
+              });
+              return {
+                data: chave,
+                icones: icones,
+                nomesLegendas: nomesLegendas,
+                nota: item.nota || ''
+              };
+            });
+        },
+
         async initApp() {
           const cache = localStorage.getItem('jardim_criativo_multicores_backup');
           if (cache) {
@@ -247,7 +340,6 @@
 
         alternarLegendaNoDia(catId) {
           if (!this.diaDetalheChave) {
-            // Se nenhum dia estiver explicitamente selecionado, seleciona a data de hoje por padrão
             const hoje = new Date().toISOString().split('T')[0];
             this.diaDetalheChave = hoje;
           }
@@ -257,12 +349,9 @@
           }
 
           let tipos = this.mosaico[this.diaDetalheChave].tipos || [];
-
           if (tipos.includes(catId)) {
-            // Remove a legenda
             tipos = tipos.filter(t => t !== catId);
           } else {
-            // Adiciona a legenda
             tipos.push(catId);
           }
 
@@ -274,7 +363,6 @@
           return this.mosaico[chave] && this.mosaico[chave].tipos && this.mosaico[chave].tipos.length > 0;
         },
 
-        // CÁLCULO DE GRADIENTE RÍGIDO PARA DIVIDIR AS CORES PROPORCIONALMENTE
         obterEstiloGradienteDia(chave) {
           if (!this.temCor(chave)) return '';
           const tipos = this.mosaico[chave].tipos;
@@ -284,13 +372,10 @@
             return leg ? leg.hex : '#78716c';
           });
 
-          if (cores.length === 1) {
-            return `background-color: ${cores[0]};`;
-          }
+          if (cores.length === 1) return `background-color: ${cores[0]};`;
 
           const percentualPorCor = 100 / cores.length;
           let stops = [];
-          
           cores.forEach((cor, idx) => {
             const inicio = (idx * percentualPorCor).toFixed(1);
             const fim = ((idx + 1) * percentualPorCor).toFixed(1);
@@ -307,6 +392,10 @@
             const leg = this.legendas.find(l => l.id === tId);
             return leg ? leg.icon : '';
           });
+        },
+
+        imprimirHistorico() {
+          window.print();
         },
 
         salvarLocal() {
@@ -332,6 +421,9 @@
         }
       }
     }
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
